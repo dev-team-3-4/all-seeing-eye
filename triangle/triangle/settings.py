@@ -4,24 +4,6 @@ Environ Variables:
         int: 0-False, 1-True
         default: 0
 
-    DB_NAME
-        string
-
-    DB_USER
-        string
-        default: postgres
-
-    DB_PASSWORD
-        string
-
-    DB_HOST
-        string
-        default: '127.0.0.1'
-
-    DB_PORT
-        int
-        default: 5432
-
 """
 
 from os import environ
@@ -77,12 +59,8 @@ WSGI_APPLICATION = 'triangle.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': environ['DB_NAME'],
-        'USER': environ.setdefault('DB_USER', 'postgres'),
-        'PASSWORD': environ['DB_PASSWORD'],
-        'HOST': environ.setdefault('DB_HOST', '127.0.0.1'),
-        'PORT': environ.setdefault('DB_PORT', '5432'),
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
