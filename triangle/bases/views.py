@@ -20,7 +20,6 @@ def get_object_or_none(queryset, *filter_args, **filter_kwargs):
 
 
 def _exception_handler(exception: Exception):
-
     set_rollback()
     error = ExceptionCaster.cast_exception(exception)
 
@@ -34,8 +33,13 @@ class BaseView(GenericAPIView):
     lookup_field = 'id'
     permission_classes = [BaseRestPermission]
 
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.queryset = self.serializer_class.Meta.model.objects.all() \
+                        if self.serializer_class else None
+
     def handle_exception(self, exception):
-        if settings.HANDLE_EXCEPTIONS:
+        if not settings.DEBUG:
             return _exception_handler(exception)
         raise exception
 

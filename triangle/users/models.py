@@ -27,14 +27,15 @@ class UserManager(BaseUserManager):
         u.save()
         return u
 
-    def create_user(self, username, email, password):
+    def create_user(self, username=None, email=None, password=None, **kwargs):
         password_validation.validate_password(password)
 
-        u = User(username=username, last_login=now())
-        u.set_password(password)
+        u = User(username=username, last_login=now(),
+                 password=password, **kwargs)
         u.save()
         try:
-            EmailConfirmObject(user=u, email=email).save()
+            if email:
+                EmailConfirmObject(user=u, email=email).save()
         except Exception:
             u.delete()
             raise
@@ -53,7 +54,6 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     username = CharField(max_length=20, unique=True)
     email = EmailField(unique=True, null=True)
-    created_at = DateTimeField(auto_now_add=True, editable=False)
     profile_photo = ImageField(upload_to='accounts_photos/', null=True, blank=True)
     role = SmallIntegerField(default=ROLES.USER)
     ban_until = DateTimeField(default=now)
@@ -82,6 +82,11 @@ class User(AbstractBaseUser, PermissionsMixin):
         if hasattr(self, 'auth_token'):
             self.auth_token.delete()
         super(User, self).set_password(raw_password)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if "password" in kwargs:
+            self.set_password(kwargs["password"])
 
     def __str__(self):
         return self.username

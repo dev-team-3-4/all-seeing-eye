@@ -1,3 +1,9 @@
-from django.shortcuts import render
+from bases.views import *
+from .serializers import *
 
-# Create your views here.
+__all__ = ["UserViewSet"]
+
+
+class UserViewSet(BaseViewSet, CreateAPIView):
+    serializer_class = UserShortSerializer
+

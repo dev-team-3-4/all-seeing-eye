@@ -1,38 +1,47 @@
 """
 Environ Variables:
-    DEBUG:
-        int: 0-False, 1-True
-        default: 0
+    Django:
+        DEBUG:
+            int: 0-False, 1-True
+            default: 0
 
-    DB_NAME
-        string
+    Database:
+        DB_NAME
+            string
 
-    DB_USER
-        string
-        default: postgres
+        DB_USER
+            string
+            default: postgres
 
-    DB_PASSWORD
-        string
+        DB_PASSWORD
+            string
 
-    DB_HOST
-        string
-        default: '127.0.0.1'
+        DB_HOST
+            string
+            default: '127.0.0.1'
 
-    DB_PORT
-        int
-        default: 5432
+        DB_PORT
+            int
+            default: 5432
 
+    email:
+        EMAIL_HOST_USER:
+            :type: str | None
+            :default: None
+        EMAIL_HOST_PASSWORD:
+            :type: str | None
+            :default: None
 """
 
 from os import environ
 from pathlib import Path
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-e0^j=7m#!w7iy48#3hp&!sr%l*45y+i)&*5n$8-7&mr8k@p!mt'
 DEBUG = bool(int(environ.setdefault('DEBUG', '0')))
 
 ALLOWED_HOSTS = ['*']
-
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -41,6 +50,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'rest_framework.authtoken',
+    'rest_framework',
 
     'frontend.apps.FrontConfig',
     'users.apps.UsersConfig',
@@ -58,10 +70,19 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'triangle.urls'
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication'
+    ],
+
+    # 'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'
+}
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -103,6 +124,18 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+###
+# email
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = environ.get('EMAIL_HOST_PASSWORD')
+
+# email
+###
 
 LANGUAGE_CODE = 'en-us'
 
