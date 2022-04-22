@@ -10,7 +10,7 @@ from django.utils.timezone import now
 from django.db.models import *
 
 
-__all__ = ["User", "EmailConfirmObject"]
+__all__ = ["User", "EmailConfirmObject", "PasswordResetObject", "Contact"]
 
 
 CHARS_POOL = string.ascii_lowercase + string.ascii_uppercase + string.digits
@@ -23,8 +23,10 @@ def generate_key(length: int, chars_pool=CHARS_POOL):
 class UserManager(BaseUserManager):
     def create_superuser(self, username, email, password):
         u = self.create_user(username, email, password)
-        u.role = User.ROLES.USER
+        u.role = User.ROLES.ADMIN
+        u.email = email
         u.save()
+        u.email_confirm_objects.first().delete()
         return u
 
     def create_user(self, username=None, email=None, password=None, **kwargs):

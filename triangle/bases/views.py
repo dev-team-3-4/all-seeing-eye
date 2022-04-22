@@ -4,6 +4,7 @@ from rest_framework.mixins import UpdateModelMixin
 from rest_framework.generics import (GenericAPIView, ListAPIView, CreateAPIView,
                                      DestroyAPIView, RetrieveAPIView, get_object_or_404)
 from rest_framework.views import set_rollback
+from rest_framework.serializers import ModelSerializer
 from bases.exceptions import *
 from bases.pagination import BasePagination
 from .permissions import BaseRestPermission
@@ -35,8 +36,8 @@ class BaseView(GenericAPIView):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.queryset = self.serializer_class.Meta.model.objects.all() \
-                        if self.serializer_class else None
+        if self.serializer_class is ModelSerializer:
+            self.queryset = self.serializer_class.Meta.model.objects.all()
 
     def handle_exception(self, exception):
         if not settings.DEBUG:

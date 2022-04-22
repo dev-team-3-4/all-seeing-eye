@@ -48,7 +48,8 @@ class EmailConfirmView(BaseView):
 
         user = confirm_object.user
         user.email = confirm_object.email
-        for co in user.email_confirm_objects:
+        for co in user.email_confirm_objects.all():
             co.delete()
+        user.save()
         # TODO serialize user
         return Response(status=200)
