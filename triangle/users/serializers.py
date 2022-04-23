@@ -1,10 +1,11 @@
+from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.serializers import *
 from .models import *
 from bases.tasks import send_mail
-from bases.views import get_object_or_none
+from bases.views import get_object_or_none, get_object_or_404
 
 
-__all__ = ['UserShortSerializer', 'EmailConfirmSerializer']
+__all__ = ['UserShortSerializer', 'EmailConfirmSerializer', 'PasswordResetSerializer']
 
 
 class UserShortSerializer(ModelSerializer):
@@ -71,8 +72,78 @@ class EmailConfirmSerializer(Serializer):
                 msg = 'Email confirm request is not found or wrong confirmation key.'
                 raise ValidationError(msg, code=403)
         else:
-            msg = 'Must include "username" and "password".'
-            raise ValidationError(msg)
+            raise ValidationError('Must include "email" and "key".', 400)
 
         attrs['confirm_object'] = confirm_object
+        return attrs
+
+
+class PasswordResetSerializer(Serializer):
+    username = CharField(
+        label="username",
+        write_only=True,
+        required=True
+    )
+    key = CharField(
+        label="confirmation key",
+        write_only=True,
+        required=False
+    )
+    password = CharField(
+        label="password",
+        write_only=True,
+        required=False
+    )
+
+    def validate(self, attrs):
+        method = self.context.get('request').method
+        username = attrs.get('username')
+        key = attrs.get('key')
+        password = attrs.get('password')
+
+        if method == 'GET':
+            # create reset password request
+            if username:
+                user = get_object_or_404(User.objects, username=username)
+                if user.email is None:
+                    raise ValidationError("User must have confirmed mail.", 403)
+
+                reset_obj, created = PasswordResetObject.objects.get_or_create(user=user)
+                if not created:
+                    reset_obj.update_key()
+                    reset_obj.save()
+
+                try:
+                    send_mail("Reset Password",
+                              f"TODO: link\nkey: {reset_obj.key}",
+                              [user.email])
+                except Exception:
+                    reset_obj.delete()
+                    raise
+
+                attrs['reset_obj'] = reset_obj
+            else:
+                raise ValidationError('Must include "username".', 400)
+
+        elif method == 'POST':
+            # do reset password
+            if username and key and password:
+                reset_obj = PasswordResetObject.objects.filter(user__username=username,
+                                                               key=key).first()
+                if not reset_obj:
+                    msg = 'Password reset request is not found or wrong confirmation key.'
+                    raise ValidationError(msg, code=403)
+
+                reset_obj.user.set_password(password)
+                reset_obj.user.save()
+
+                attrs['user'] = reset_obj.user
+
+                reset_obj.delete()
+            else:
+                raise ValidationError('Must include "username", "key" and "password".', 400)
+
+        else:
+            raise MethodNotAllowed(method)
+
         return attrs

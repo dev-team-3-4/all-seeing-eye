@@ -6,7 +6,7 @@ from rest_framework.schemas import coreapi as coreapi_schema
 from bases.views import *
 from .serializers import *
 
-__all__ = ["UserViewSet", "EmailConfirmView"]
+__all__ = ["UserViewSet", "EmailConfirmView", "PasswordResetView"]
 
 
 class UserViewSet(BaseViewSet, CreateAPIView):
@@ -53,3 +53,38 @@ class EmailConfirmView(BaseView):
         user.save()
         # TODO serialize user
         return Response(status=200)
+
+
+class PasswordResetView(BaseView):
+    serializer_class = PasswordResetSerializer
+
+    if coreapi_schema.is_enabled():
+        schema = ManualSchema(
+            fields=[
+                coreapi.Field(
+                    name="key",
+                    required=True,
+                    location='form',
+                    schema=coreschema.String(
+                        title="Confirmation Key",
+                        description="Confirmation key from received mail",
+                    ),
+                ),
+                coreapi.Field(
+                    name="password",
+                    required=True,
+                    location='form',
+                    schema=coreschema.String(
+                        title="New password",
+                    ),
+                ),
+            ],
+            encoding="application/json",
+        )
+
+    def get(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data | kwargs)
+        serializer.is_valid(raise_exception=True)
+        return Response(status=200)
+
+    post = get

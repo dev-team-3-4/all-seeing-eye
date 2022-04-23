@@ -115,7 +115,7 @@ class EmailConfirmObject(Model):
 
     def update_key(self):
         self.key = generate_key_for_email()
-        self.created_time = now
+        self.created_time = now()
 
     def save(self, **kwargs):
         self.full_clean()
@@ -130,12 +130,12 @@ class PasswordResetObject(Model):
     LIVE_TIME = timedelta(minutes=5)
 
     user = OneToOneField('User', on_delete=CASCADE, related_name='password_reset_obj')
-    key = CharField(max_length=6, default=generate_key_for_password)
+    key = CharField(max_length=16, default=generate_key_for_password)
     created_time = DateTimeField(default=now)
 
     def update_key(self):
         self.key = generate_key_for_password()
-        self.created_time = now
+        self.created_time = now()
 
 
 class Contact(Model):
