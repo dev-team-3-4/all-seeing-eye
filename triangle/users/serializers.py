@@ -1,3 +1,5 @@
+from django.contrib.auth import password_validation
+from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.serializers import *
 from .models import *
@@ -5,7 +7,8 @@ from bases.tasks import send_mail
 from bases.views import get_object_or_none, get_object_or_404
 
 
-__all__ = ['UserShortSerializer', 'EmailConfirmSerializer', 'PasswordResetSerializer']
+__all__ = ['UserShortSerializer', 'EmailConfirmSerializer',
+           'PasswordResetSerializer', 'ChangePasswordSerializer']
 
 
 class UserShortSerializer(ModelSerializer):
@@ -133,13 +136,10 @@ class PasswordResetSerializer(Serializer):
                 if not reset_obj:
                     msg = 'Password reset request is not found or wrong confirmation key.'
                     raise ValidationError(msg, code=403)
+                password_validation.validate_password(password)
 
-                reset_obj.user.set_password(password)
-                reset_obj.user.save()
+                attrs['reset_obj'] = reset_obj
 
-                attrs['user'] = reset_obj.user
-
-                reset_obj.delete()
             else:
                 raise ValidationError('Must include "username", "key" and "password".', 400)
 
@@ -147,3 +147,42 @@ class PasswordResetSerializer(Serializer):
             raise MethodNotAllowed(method)
 
         return attrs
+
+
+class ChangePasswordSerializer(Serializer):
+    old_password = CharField(
+        label="old password",
+        write_only=True,
+        required=True
+    )
+    password = CharField(
+        label="password",
+        write_only=True,
+        required=True
+    )
+    token = CharField(
+        label="new auth token",
+        read_only=True
+    )
+
+    def validate(self, attrs):
+        old_password = attrs.get('old_password')
+        password = attrs.get('password')
+
+        if old_password and password:
+            if not self.instance.check_password(old_password):
+                raise ValidationError('Wrong old password.', 403)
+            password_validation.validate_password(password)
+        else:
+            raise ValidationError('Must include "old_password" and "password".', 400)
+
+        return attrs
+
+    def update(self, instance, validated_data):
+        instance.set_password(validated_data['password'])
+        instance.save()
+
+        token = Token.objects.get_or_create(user=instance)[0]
+        self._data['token'] = token.key
+
+        return instance
