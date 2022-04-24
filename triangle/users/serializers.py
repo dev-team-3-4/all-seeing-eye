@@ -2,6 +2,8 @@ from django.contrib.auth import password_validation
 from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.serializers import *
+
+from bases.exceptions import APIException
 from .models import *
 from bases.tasks import send_mail
 from bases.views import get_object_or_none, get_object_or_404
@@ -92,6 +94,8 @@ class EmailConfirmSerializer(Serializer):
         if method == "GET":
             if email and username:
                 user = get_object_or_404(User.objects, username=username)
+                if self.context.get('request').user != user:
+                    raise APIException('Access denied', 403)
                 confirm_object, created = EmailConfirmObject.objects.get_or_create(email=email, user=user)
                 if not created:
                     confirm_object.update_key()
