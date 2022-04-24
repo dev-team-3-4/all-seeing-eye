@@ -36,6 +36,14 @@ class EmailConfirmView(BaseView):
         schema = ManualSchema(
             fields=[
                 coreapi.Field(
+                    name="username",
+                    required=False,
+                    location='form',
+                    schema=coreschema.String(
+                        title="Username"
+                    ),
+                ),
+                coreapi.Field(
                     name="email",
                     required=True,
                     location='form',
@@ -46,7 +54,7 @@ class EmailConfirmView(BaseView):
                 ),
                 coreapi.Field(
                     name="key",
-                    required=True,
+                    required=False,
                     location='form',
                     schema=coreschema.String(
                         title="Confirmation Key",
@@ -56,6 +64,11 @@ class EmailConfirmView(BaseView):
             ],
             encoding="application/json",
         )
+
+    def get(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return Response(status=200)
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)

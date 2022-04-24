@@ -67,29 +67,60 @@ class UserSerializer(ModelSerializer):
 
 
 class EmailConfirmSerializer(Serializer):
+    username = CharField(
+        label="username",
+        write_only=True,
+        required=False
+    )
     email = CharField(
         label="email",
-        write_only=True
+        write_only=True,
+        required=True
     )
     key = CharField(
         label="confirmation key",
-        write_only=True
+        write_only=True,
+        required=False
     )
 
     def validate(self, attrs):
+        method = self.context.get('request').method
+        username = attrs.get('username')
         email = attrs.get('email')
         key = attrs.get('key')
 
-        if email and key:
-            confirm_object = get_object_or_none(EmailConfirmObject.objects, email=email, key=key)
+        if method == "GET":
+            if email and username:
+                user = get_object_or_404(User.objects, username=username)
+                confirm_object, created = EmailConfirmObject.objects.get_or_create(email=email, user=user)
+                if not created:
+                    confirm_object.update_key()
+                    confirm_object.save()
 
-            if not confirm_object:
-                msg = 'Email confirm request is not found or wrong confirmation key.'
-                raise ValidationError(msg, code=403)
+                try:
+                    send_mail("Triangle Confirm mail",
+                              f"Code is {confirm_object.key}",
+                              [confirm_object.email])
+                except Exception:
+                    confirm_object.delete()
+                    raise
+                attrs['confirm_object'] = confirm_object
+            else:
+                raise ValidationError('Must include "email" and "username".', 400)
+        elif method == "POST":
+            if email and key:
+                confirm_object = get_object_or_none(EmailConfirmObject.objects, email=email, key=key)
+
+                if not confirm_object:
+                    msg = 'Email confirm request is not found or wrong confirmation key.'
+                    raise ValidationError(msg, code=403)
+            else:
+                raise ValidationError('Must include "email" and "key".', 400)
+
+            attrs['confirm_object'] = confirm_object
         else:
-            raise ValidationError('Must include "email" and "key".', 400)
+            raise MethodNotAllowed(method)
 
-        attrs['confirm_object'] = confirm_object
         return attrs
 
 
