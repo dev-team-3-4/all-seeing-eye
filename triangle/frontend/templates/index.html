@@ -1,10 +1,30 @@
-<!DOCTYPE html>
-<html lang="en">
+{% load static %}
+<!doctype html>
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Index</title>
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>MainPage</title>
+    <link rel="stylesheet" href="{% static 'css/index_style.css'%}" type="text/css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="{% static 'js/index.js' %}"></script>
 </head>
 <body>
-<h1>K-6205</h1>
+<div id="main-container">
+    <div class="centered_div buttons_container">
+        <div id="choose_auth_type">
+            <h2 id="enter_triangle_message">
+                Вход Triangle
+            </h2>
+            <p id="message_auth">
+                Чтобы продолжить, необходимо авторизоваться:
+            </p>
+            <button class="auth_button" id="register_button">Зарегистрироваться</button>
+            <button class="auth_button">Войти</button>
+        </div>
+    </div>
+</div>
 </body>
 </html>
