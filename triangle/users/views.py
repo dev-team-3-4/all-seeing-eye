@@ -8,11 +8,25 @@ from .models import User
 from .serializers import *
 
 __all__ = ["UserViewSet", "EmailConfirmView",
-           "PasswordResetView", "ChangePasswordView"]
+           "PasswordResetView", "ChangePasswordView", "UserView"]
 
 
 class UserViewSet(BaseViewSet, CreateAPIView):
     serializer_class = UserShortSerializer
+
+
+class UserView(BaseView, RetrieveAPIView, UpdateAPIView, DestroyAPIView):
+    lookup_field = 'username'
+    serializer_class = UserSerializer
+
+    def check_put_perms(self, request, obj):
+        if request.user != obj:
+            raise APIException('Access denied', 403)
+
+    def check_delete_perms(self, request, obj):
+        if request.user != obj:
+            raise APIException('Access denied', 403)
+        # TODO check haven't active smart contracts
 
 
 class EmailConfirmView(BaseView):
@@ -53,8 +67,8 @@ class EmailConfirmView(BaseView):
         for co in user.email_confirm_objects.all():
             co.delete()
         user.save()
-        # TODO serialize user
-        return Response(status=200)
+        serializer = UserSerializer(instance=user)
+        return Response(serializer.data, status=200)
 
 
 class PasswordResetView(BaseView):
@@ -94,11 +108,12 @@ class PasswordResetView(BaseView):
         serializer.is_valid(raise_exception=True)
         reset_obj = serializer.validated_data['reset_obj']
 
-        reset_obj.user.set_password(serializer.validated_data['password'])
-        reset_obj.user.save()
+        user = reset_obj.user
+        user.set_password(serializer.validated_data['password'])
+        user.save()
         reset_obj.delete()
-        # TODO serialize user
-        return Response(status=200)
+        serializer = UserSerializer(instance=user)
+        return Response(serializer.data, status=200)
 
 
 class ChangePasswordView(BaseView, UpdateAPIView):
@@ -130,6 +145,5 @@ class ChangePasswordView(BaseView, UpdateAPIView):
         )
 
     def check_put_perms(self, request, obj):
-        self.check_anonymous(request)
         if request.user != obj:
             raise APIException('Access denied', 403)

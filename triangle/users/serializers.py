@@ -8,7 +8,8 @@ from bases.views import get_object_or_none, get_object_or_404
 
 
 __all__ = ['UserShortSerializer', 'EmailConfirmSerializer',
-           'PasswordResetSerializer', 'ChangePasswordSerializer']
+           'PasswordResetSerializer', 'ChangePasswordSerializer',
+           'UserSerializer']
 
 
 class UserShortSerializer(ModelSerializer):
@@ -51,6 +52,17 @@ class UserShortSerializer(ModelSerializer):
         extra_kwargs = {
             "email": {"write_only": True, "required": True},
             "password": {"write_only": True, "required": True}
+        }
+
+
+class UserSerializer(ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["id", "username", "profile_photo", "registration_time",
+                  "bank_card_number", "is_online"]
+        read_only_fields = ["id", "registration_time", "is_online"]
+        extra_kwargs = {
+            "bank_card_number": {"write_only": True}
         }
 
 
