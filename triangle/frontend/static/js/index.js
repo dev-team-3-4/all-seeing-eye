@@ -2,7 +2,7 @@ window.onload =
 function ()
 {
     function changeDisplay(object, vis = "none") {
-        return function () {
+        return () => {
             $(object).css(
                 "display", vis
             );
