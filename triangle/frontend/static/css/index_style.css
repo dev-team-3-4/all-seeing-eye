@@ -72,7 +72,45 @@ body {
     text-align: center;
 }
 
-#register_button:active #enter_triangle_message {
-    color: red;
+#choose_auth_type {
+    display: none;
 }
 
+#login_form_container {
+    display: block;
+}
+
+#register_container {
+    display: none;
+}
+
+
+.from_text {
+    margin-top: 20px;
+    width: 200px;
+    margin-left: 25px;
+    height: 30px;
+    border-radius: 5px;
+    font-size: 15px;
+}
+
+#forgot_password_button {
+    border: none;
+    background: inherit;
+    
+    color: rgba(255, 255, 255, 0.45);
+    width: 120px;
+    margin: 5px 5px 5px 65px;
+    text-align: center;
+    text-decoration-style: dotted;
+}
+
+#forgot_password_button:hover {
+    text-decoration-line: underline;
+    color: rgba(252, 45, 45, 0.85);
+}
+
+#back_button {
+    margin-top: 5px;
+    background-color: #5858ff;
+}
