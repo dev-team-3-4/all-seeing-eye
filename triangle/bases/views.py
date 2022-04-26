@@ -40,7 +40,7 @@ class BaseView(GenericAPIView):
             self.queryset = self.serializer_class.Meta.model.objects.all()
 
     def handle_exception(self, exception):
-        if not settings.DEBUG:
+        if not settings.HANDLE_EXCEPTIONS:
             return _exception_handler(exception)
         raise exception
 
