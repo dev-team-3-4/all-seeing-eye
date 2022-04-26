@@ -32,14 +32,14 @@ Environ Variables:
             :type: str | None
             :default: None
 """
-
+import os
 from os import environ
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-e0^j=7m#!w7iy48#3hp&!sr%l*45y+i)&*5n$8-7&mr8k@p!mt'
-DEBUG = bool(int(environ.setdefault('DEBUG', '1')))
+DEBUG = bool(int(environ.setdefault('DEBUG', '0')))
 
 ALLOWED_HOSTS = ['*']
 
@@ -145,6 +145,9 @@ USE_I18N = True
 
 USE_TZ = True
 STATIC_URL = 'static/'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 STATICFILES_DIRS = [
     BASE_DIR / "frontend/static",

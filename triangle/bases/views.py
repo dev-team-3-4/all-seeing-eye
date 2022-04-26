@@ -36,7 +36,7 @@ class BaseView(GenericAPIView):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        if self.serializer_class is ModelSerializer:
+        if issubclass(self.serializer_class, ModelSerializer):
             self.queryset = self.serializer_class.Meta.model.objects.all()
 
     def handle_exception(self, exception):
