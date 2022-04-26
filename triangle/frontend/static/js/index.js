@@ -28,7 +28,10 @@ function ()
     $("#login_form").submit((e) => {
         e.preventDefault();
         sessionStorage.clear();
+
         let reg_password = $("#reg_password").val();
+        let reg_login = $("#reg_login").val();
+        let reg_email = $("#reg_email").val();
 
         if (reg_password !== $("#reg_password_confirm").val()) {
             alert("Пароли дожны совпадать!");
@@ -38,9 +41,28 @@ function ()
             return;
         }
 
-        sessionStorage.setItem("login", $("#reg_login").val());
-        sessionStorage.setItem("email", $("#reg_email").val());
+        sessionStorage.setItem("login", reg_login);
+        sessionStorage.setItem("email", reg_email);
         sessionStorage.setItem("password", reg_password);
+
+        $.ajax({
+            url: "/user/",
+            method: "post",
+            dataType: "json",
+            data: {
+                username: reg_login,
+                email: reg_email,
+                password: reg_password
+            },
+            error: function (data) {
+                alert("error");
+                console.log(JSON.stringify(data));
+            },
+            success: function (data) {
+                alert("sccss");
+                alert(data);
+            }
+        });
 
         changeDisplay("#confirm_email_window", "block")();
         changeDisplay("#register_container", "none")();

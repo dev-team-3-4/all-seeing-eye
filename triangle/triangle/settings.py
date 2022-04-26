@@ -39,7 +39,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-e0^j=7m#!w7iy48#3hp&!sr%l*45y+i)&*5n$8-7&mr8k@p!mt'
-DEBUG = bool(int(environ.setdefault('DEBUG', '0')))
+DEBUG = bool(int(environ.setdefault('DEBUG', '1')))
 
 ALLOWED_HOSTS = ['*']
 
