@@ -117,3 +117,7 @@ body {
     margin-top: 5px;
     background-color: #5858ff;
 }
+
+#confirm_email_window {
+    display: none;
+}

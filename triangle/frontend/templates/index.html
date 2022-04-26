@@ -44,12 +44,23 @@
                 Регистрация Triangle
             </h2>
 
-            <form class="login_form">
-                <input type="text" placeholder="Введите логин" class="from_text" required>
-                <input type="email" placeholder="email" class="from_text" required>
-                <input type="password" placeholder="Введите пароль" class="from_text" required>
-                <input type="password" placeholder="Повторите пароль" class="from_text" required>
+            <form id="login_form">
+                <input type="text" placeholder="Введите логин" class="from_text" required id="reg_login">
+                <input type="email" placeholder="email" class="from_text" required id="reg_email">
+                <input type="password" placeholder="Введите пароль" class="from_text" required id="reg_password">
+                <input type="password" placeholder="Повторите пароль" class="from_text" required id="reg_password_confirm">
                 <input type="submit" value="Войти!" class="auth_button button">
+            </form>
+            <button class="auth_button button" id="back_button_register">Назад</button>
+        </div>
+
+        <div id="confirm_email_window" class="inner_modal">
+            <h2 id="enter_triangle_message">
+                Подтверждение почты
+            </h2>
+            <form id="accept_code">
+                <input type="text" placeholder="Код" class="from_text" required id="reg_code">
+                <input type="submit" value="Подтвердить!" class="auth_button button">
             </form>
             <button class="auth_button button" id="back_button_register">Назад</button>
         </div>
