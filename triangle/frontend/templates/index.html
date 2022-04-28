@@ -7,7 +7,7 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>MainPage</title>
-    <link rel="stylesheet" href="{% static 'css/index_style.css'%}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/index.css' %}" type="text/css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="{% static 'js/index.js' %}"></script>
 </head>
@@ -30,9 +30,9 @@
                 Вход Triangle
             </h2>
 
-            <form class="login_form">
-                <input type="text" placeholder="Введите логин" class="from_text" required>
-                <input type="password" placeholder="Введите пароль" class="from_text" required>
+            <form class="login_form" id="auth_form">
+                <input type="text" placeholder="Введите логин" class="from_text" required id="auth_login">
+                <input type="password" placeholder="Введите пароль" class="from_text" required id="auth_password">
                 <input type="submit" value="Войти!" class="auth_button button">
             </form>
             <button id="forgot_password_button">Забыли пароль?</button>
@@ -49,7 +49,7 @@
                 <input type="email" placeholder="email" class="from_text" required id="reg_email">
                 <input type="password" placeholder="Введите пароль" class="from_text" required id="reg_password">
                 <input type="password" placeholder="Повторите пароль" class="from_text" required id="reg_password_confirm">
-                <input type="submit" value="Войти!" class="auth_button button">
+                <input type="submit" value="Зарегистрироваться!" class="auth_button button">
             </form>
             <button class="auth_button button" id="back_button_register">Назад</button>
         </div>

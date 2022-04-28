@@ -1,0 +1,45 @@
+* {
+    background-color: #262626;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.main {
+    display: flex;
+    width: 60vw;
+    height: 100vh;
+}
+
+.left_side_buttons {
+    max-width: 150px;
+    flex-grow: 0;
+}
+
+.profile_container {
+    flex-grow: 1;
+}
+
+.profile_photo {
+    width: 100px;
+    height: 100px;
+
+    background-color: green;
+}
+
+.nav_button {
+    background-color: #5858ff;
+    color: white;
+    width: 95%;
+    height: 30px;
+    border: none;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+.nav_button:hover {
+    filter: saturate(2);
+}
+
+.exit_button {
+    margin-top: calc(100vh - 200px);
+}
