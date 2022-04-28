@@ -5,6 +5,9 @@ Environ Variables:
             int: 0-False, 1-True
             default: 0
 
+        HANDLE_EXCEPTIONS
+            int: 0-False, 1-True
+            default: not DEBUG
 """
 
 from os import environ, path
@@ -14,6 +17,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-e0^j=7m#!w7iy48#3hp&!sr%l*45y+i)&*5n$8-7&mr8k@p!mt'
 DEBUG = bool(int(environ.setdefault('DEBUG', '0')))
+HANDLE_EXCEPTIONS = bool(int(environ['HANDLE_EXCEPTIONS'])) if 'HANDLE_EXCEPTIONS' in environ else not DEBUG
 
 ALLOWED_HOSTS = ['*']
 
@@ -25,6 +29,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'drf_spectacular',
     'rest_framework.authtoken',
     'rest_framework',
 
@@ -50,7 +55,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication'
     ],
 
-    # 'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'
 }
 
 TEMPLATES = [
