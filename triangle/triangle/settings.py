@@ -36,7 +36,7 @@ Environ Variables:
             :type: str | None
             :default: None
 """
-
+import os
 from os import environ, path
 from pathlib import Path
 
