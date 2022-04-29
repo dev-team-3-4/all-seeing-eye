@@ -66,12 +66,12 @@ class EmailConfirmView(BaseView):
         )
 
     def get(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
+        serializer = self.get_serializer(data=request.data.dict())
         serializer.is_valid(raise_exception=True)
         return Response(status=200)
 
     def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
+        serializer = self.get_serializer(data=request.data.dict())
         serializer.is_valid(raise_exception=True)
         confirm_object = serializer.validated_data['confirm_object']
 
@@ -112,12 +112,12 @@ class PasswordResetView(BaseView):
         )
 
     def get(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data | kwargs)
+        serializer = self.get_serializer(data=request.data.dict() | kwargs)
         serializer.is_valid(raise_exception=True)
         return Response(status=200)
 
     def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data | kwargs)
+        serializer = self.get_serializer(data=request.data.dict() | kwargs)
         serializer.is_valid(raise_exception=True)
         reset_obj = serializer.validated_data['reset_obj']
 
