@@ -141,9 +141,8 @@ function ()
 
     $("#forgot_password_button").click((e) => {
         $.ajax({
-            url: "/user/" + $("#auth_login").val() + "/reset",
+            url: "/user/" + $("#auth_login").val() + "/reset/",
             method: "get",
-            dataType: "json",
             data: {},
             error: function(data) {
                 console.log(data);
