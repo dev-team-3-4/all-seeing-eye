@@ -1,0 +1,123 @@
+* {
+    font-family: Arial, serif;
+}
+
+html {
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#main-container {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    background-color: #262626;
+    justify-content: center;
+    align-items: center;
+}
+
+.auth {
+    max-width: 300px;
+    width: 100%;
+    background-color: gray;
+    padding: 24px;
+    border-radius: 6px;
+}
+
+.buttons_container {
+    background-color: #444444;
+    width: 250px;
+    height: fit-content;
+    border-radius: 3%;
+}
+
+.button {
+    text-decoration: none;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    width: 100%;
+    margin: 6px 0;
+}
+
+.auth_button {
+    background-color: #4ab24b;
+    color: white;
+}
+
+.auth_button:hover {
+    /*background-color: #00c000;*/
+    filter: saturate(2);
+}
+
+.auth:first-child {
+    margin-top: 0;
+}
+
+#message_auth {
+    display: block;
+    margin-top: 30px;
+    color: white;
+    text-align: center;
+}
+
+#enter_triangle_message {
+    margin: 0;
+    padding-top: 20px;
+    display: block;
+    color: white;
+    text-align: center;
+}
+
+#choose_auth_type {
+    display: block;
+}
+
+#login_form_container {
+    display: none;
+}
+
+#register_container {
+    display: none;
+}
+
+
+.from_text {
+    margin-top: 20px;
+    width: 100%;
+    height: 30px;
+    border-radius: 5px;
+    font-size: 15px;
+}
+
+#forgot_password_button {
+    border: none;
+    background: inherit;
+
+    color: rgba(255, 255, 255, 0.45);
+    width: 120px;
+    margin: 5px 5px 5px 90px;
+    text-align: center;
+    text-decoration-style: dotted;
+}
+
+#forgot_password_button:hover {
+    text-decoration-line: underline;
+    color: rgba(252, 45, 45, 0.85);
+}
+
+#back_button {
+    margin-top: 5px;
+    background-color: #5858ff;
+}
+
+#confirm_email_window {
+    display: none;
+}

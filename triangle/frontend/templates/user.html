@@ -1,0 +1,77 @@
+{% load static %}
+
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <link rel="stylesheet" href="{% static 'css/user.css'%}" type="text/css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="{% static 'js/user.js' %}"></script>
+    <title>Пользователь {{ username }}</title>
+
+    <script>
+        var username = "{{ username }}";
+    </script>
+</head>
+<body>
+
+<div class="main">
+    <div class="left_side_buttons">
+        <button class="nav_button">Профиль</button>
+        <button class="nav_button">Чаты</button>
+        <button class="nav_button">Контакты</button>
+        <button class="nav_button">Сделки</button>
+        <button class="nav_button exit_button">Выход</button>
+    </div>
+
+    <div class="profile_container">
+        <div class="buttons_container">
+            <div style="display: flex; width: 100%; flex-direction: row;">
+                <img src="{% static 'img/camera_400.gif' %}" alt="Profile photo" class="profile_photo">
+                <input type="button" value="Загрузить изображение!" class="button upload_image_button">
+            </div>
+
+            <form class="inputs_form" id="username_bank_card_id_form">
+                <div class="inputs_container">
+                    <input type="text" value="{{ username }}" class="text_input" id="input_username">
+                    <input type="tel" inputmode="numeric" pattern="[0-9\s]{13,19}" autocomplete="cc-number" maxlength="19" placeholder="xxxx xxxx xxxx xxxx" class="text_input" id="bank_card_num" value="{{ card_number }}">
+                </div>
+                <input type="submit" value="Сохранить!" class="button update_button">
+            </form>
+
+            <form method="get" class="inputs_form" id="change_password_form">
+                <div class="inputs_container">
+                    <input type="password" value="" class="text_input" name="password" placeholder="Старый пароль" required id="old_password">
+                    <input type="password" value="" class="text_input" name="password_2" placeholder="Новый пароль" required id="new_password">
+                </div>
+                <input type="submit" value="Сохранить!" class="button update_button">
+            </form>
+
+            <form method="get" class="inputs_form" id="change_email_send_key">
+                <div class="inputs_container">
+                    <input type="email" value="{{ user_email }}" class="text_input" name="email_input" placeholder="email" required id="email_input">
+                </div>
+                <input type="submit" value="Отправить код!" class="button update_button">
+            </form>
+
+            <form class="inputs_form" id="form_key">
+                <div class="inputs_container">
+                    <input type="text" value="" class="text_input" name="email_input" placeholder="Введите код из письма" required id="email_key_input">
+                </div>
+                <input type="submit" value="Потвердить почту!" class="button update_button" id="key_input">
+            </form>
+
+            <div class="inputs_form">
+                <input type="submit" value="Удалить профиль!" class="button update_button delete_profile_button" id="delete_profile_button">
+            </div>
+
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
