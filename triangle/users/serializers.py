@@ -91,7 +91,7 @@ class EmailConfirmSerializer(Serializer):
         email = attrs.get('email')
         key = attrs.get('key')
 
-        if method == "GET":
+        if method == "PUT":
             if email and username:
                 user = get_object_or_404(User.objects, username=username)
                 if self.context.get('request').user != user:

@@ -65,7 +65,7 @@ class EmailConfirmView(BaseView):
             encoding="application/json",
         )
 
-    def get(self, request, *args, **kwargs):
+    def put(self, request, *args, **kwargs):
         if hasattr(request.data, 'dict'):
             serializer = self.get_serializer(data=request.data.dict())
         else:
