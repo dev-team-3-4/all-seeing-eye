@@ -76,13 +76,11 @@ window.onload = function () {
         e.preventDefault();
 
         $.ajax({
-            url: "/user/change/email",
+            url: "/user/change/email/",
             method: "put",
-            dataType: 'json',
-            contentType: 'application/json',
             data: {
                 "email": $("#email_input").val(),
-                "username": username
+                "username": "" + username
             },
             headers: {
                 "Authorization": "Token " + getCookie("token"),
@@ -95,6 +93,45 @@ window.onload = function () {
                 alert("На почту отправлено письмо с кодом подтверждения!")
             }
         });
-
     });
+
+    $("#form_key").submit((e) => {
+        e.preventDefault();
+
+        $.ajax({
+            url: "/user/change/email/",
+            method: "post",
+            data: {
+                "email": $("#email_input").val(),
+                "key": $("#email_key_input").val()
+            },
+            error: (data) => {
+                console.log(data);
+                alert("Неправильный код!")
+            },
+            success: (data) => {
+                location.reload();
+            }
+        });
+    });
+
+    $("#delete_profile_button").click((e) => {
+        if(confirm("Вы точно хотите удалить профиль?")) {
+            $.ajax({
+                url: "/user/" + username + "/",
+                method: "delete",
+                headers: {
+                    "Authorization": "Token " + getCookie("token"),
+                },
+                error: (data) => {
+                    console.log(data);
+                    alert("Неправильный код!")
+                },
+                success: (data) => {
+                    location.replace("/web");
+                    setCookie("token", undefined)
+                }
+            });
+        }
+    })
 }

@@ -58,16 +58,16 @@
                 <input type="submit" value="Отправить код!" class="button update_button">
             </form>
 
-            <form method="get" class="inputs_form">
+            <form class="inputs_form" id="form_key">
                 <div class="inputs_container">
-                    <input type="text" value="" class="text_input" name="email_input" placeholder="Введите код из письма" required>
+                    <input type="text" value="" class="text_input" name="email_input" placeholder="Введите код из письма" required id="email_key_input">
                 </div>
-                <input type="submit" value="Потвердить почту!" class="button update_button ">
+                <input type="submit" value="Потвердить почту!" class="button update_button" id="key_input">
             </form>
 
-            <form method="get" class="inputs_form">
-                <input type="submit" value="Удалить профиль!" class="button update_button delete_profile_button">
-            </form>
+            <div class="inputs_form">
+                <input type="submit" value="Удалить профиль!" class="button update_button delete_profile_button" id="delete_profile_button">
+            </div>
 
         </div>
     </div>
