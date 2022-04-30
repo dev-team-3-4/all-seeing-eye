@@ -40,7 +40,7 @@ function ()
             success: function (data) {
                 console.log(data);
                 setCookie("token", data["token"], 10);
-                window.location.replace("/user/" + l);
+                window.location.replace("/web/user/" + l);
             }
         });
     }
