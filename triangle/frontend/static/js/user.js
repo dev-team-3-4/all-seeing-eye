@@ -60,7 +60,7 @@ window.onload = function () {
                 console.log(data);
             },
             success: (data) => {
-                let token = data.responseJSON["token"]
+                let token = data["token"]
                 setCookie("token", token);
                 alert("Пароль успешно заменён!");
 
@@ -76,12 +76,16 @@ window.onload = function () {
         e.preventDefault();
 
         $.ajax({
-            url: "/user/change/email/",
-            method: "get",
-            dataType: "json",
+            url: "/user/change/email",
+            method: "put",
+            dataType: 'json',
+            contentType: 'application/json',
             data: {
                 "email": $("#email_input").val(),
-                username: username
+                "username": username
+            },
+            headers: {
+                "Authorization": "Token " + getCookie("token"),
             },
             error: (data) => {
                 console.log(data);
