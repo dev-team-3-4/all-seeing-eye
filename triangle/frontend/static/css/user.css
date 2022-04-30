@@ -103,3 +103,9 @@
     background-color: #4ab24b;
     width: 200px;
 }
+
+.delete_profile_button {
+    background-color: #ff3131;
+    height: 30px;
+    width: 510px;
+}
