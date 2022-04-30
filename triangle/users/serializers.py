@@ -231,6 +231,6 @@ class ChangePasswordSerializer(Serializer):
         instance.save()
 
         token = Token.objects.get_or_create(user=instance)[0]
-        self._data['token'] = token.key
+        self._data = {'token': token.key}
 
         return instance
