@@ -11,9 +11,6 @@ function ()
       })
       return res;
     }
-    if (getCookie("token") != undefined) {
-        // alert("cookie already there!");
-    }
 
     function setCookie(name,value,days) {
         var expires = "";
@@ -23,6 +20,10 @@ function ()
             expires = "; expires=" + date.toUTCString();
         }
         document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+    }
+
+    if (getCookie("token") != undefined) {
+        // alert("cookie already there!");
     }
 
     function getAuthToken(l, p) {

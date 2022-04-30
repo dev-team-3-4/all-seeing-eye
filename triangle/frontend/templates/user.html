@@ -12,6 +12,10 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="{% static 'js/user.js' %}"></script>
     <title>Пользователь {{ username }}</title>
+
+    <script>
+        var username = "{{ username }}";
+    </script>
 </head>
 <body>
 
@@ -26,42 +30,42 @@
 
     <div class="profile_container">
         <div class="buttons_container">
-            <div style="display: flex; width: 100%">
+            <div style="display: flex; width: 100%; flex-direction: row;">
                 <img src="{% static 'img/camera_400.gif' %}" alt="Profile photo" class="profile_photo">
                 <input type="button" value="Загрузить изображение!" class="button upload_image_button">
             </div>
 
-            <div class="update_login_bank_card">
+            <form class="inputs_form" id="username_bank_card_id_form">
                 <div class="inputs_container">
-                    <input type="text" value="{{ username }}" class="text_input">
-                    <input type="text" value="" class="text_input" placeholder="Номер банковской карты">
-                </div>
-                <input type="button" value="Сохранить!" class="button update_button">
-            </div>
-
-            <form method="get" class="update_login_bank_card">
-                <div class="inputs_container">
-                    <input type="password" value="" class="text_input" name="password" placeholder="Старый пароль" required>
-                    <input type="password" value="" class="text_input" name="password_2" placeholder="Новый пароль"required>
+                    <input type="text" value="{{ username }}" class="text_input" id="input_username">
+                    <input type="tel" inputmode="numeric" pattern="[0-9\s]{13,19}" autocomplete="cc-number" maxlength="19" placeholder="xxxx xxxx xxxx xxxx" class="text_input" id="bank_card_num" value="{{ card_number }}">
                 </div>
                 <input type="submit" value="Сохранить!" class="button update_button">
             </form>
 
-            <form method="get" class="update_login_bank_card">
+            <form method="get" class="inputs_form" id="change_password_form">
                 <div class="inputs_container">
-                    <input type="email" value="{{ user_email }}" class="text_input" name="email_input" placeholder="email" required>
+                    <input type="password" value="" class="text_input" name="password" placeholder="Старый пароль" required id="old_password">
+                    <input type="password" value="" class="text_input" name="password_2" placeholder="Новый пароль" required id="new_password">
+                </div>
+                <input type="submit" value="Сохранить!" class="button update_button">
+            </form>
+
+            <form method="get" class="inputs_form" id="change_email_send_key">
+                <div class="inputs_container">
+                    <input type="email" value="{{ user_email }}" class="text_input" name="email_input" placeholder="email" required id="email_input">
                 </div>
                 <input type="submit" value="Отправить код!" class="button update_button">
             </form>
 
-            <form method="get" class="update_login_bank_card">
+            <form method="get" class="inputs_form">
                 <div class="inputs_container">
                     <input type="text" value="" class="text_input" name="email_input" placeholder="Введите код из письма" required>
                 </div>
                 <input type="submit" value="Потвердить почту!" class="button update_button ">
             </form>
 
-            <form method="get" class="update_login_bank_card">
+            <form method="get" class="inputs_form">
                 <input type="submit" value="Удалить профиль!" class="button update_button delete_profile_button">
             </form>
 

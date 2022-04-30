@@ -84,7 +84,7 @@
     margin-left: 50px;
 }
 
-.update_login_bank_card {
+.inputs_form {
     display: flex;
     flex-direction: row;
     width: 100%;
