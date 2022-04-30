@@ -14,5 +14,5 @@ if settings.DEBUG:
     urlpatterns += [
         path('__docs__/', SpectacularAPIView.as_view(), name='__docs__'),
         path('swagger/', SpectacularSwaggerView.as_view(url_name='__docs__')),
-        static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0]),
     ]
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0])
