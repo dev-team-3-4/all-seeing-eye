@@ -10,7 +10,7 @@
 - [Техническое задание](https://github.com/dev-team-3-4/all-seeing-eye/blob/main/docs/Тех.%20задание.pdf)
 - [Miro](https://miro.com/app/board/uXjVOFNi91o=/)
 - [Jira](https://otsu.atlassian.net/jira/software/projects/DT34/boards/1)
-- [Курсовая работа](https://github.com/dev-team-3-4/all-seeing-eye/blob/master/Курсовая_работа.docx)
+- [Курсовая работа](https://github.com/dev-team-3-4/all-seeing-eye/blob/main/docs/Курсовая_работа.docx)
 
 ## Демонстрационная версия сайта на heroku:
 https://triangle-dev.herokuapp.com/web/
