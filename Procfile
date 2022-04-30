@@ -1,1 +1,1 @@
-web: gunicorn --workers=3 triangle.triangle.wsgi
+web: gunicorn --workers=9 triangle.triangle.wsgi
