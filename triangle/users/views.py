@@ -65,13 +65,19 @@ class EmailConfirmView(BaseView):
             encoding="application/json",
         )
 
-    def get(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
+    def put(self, request, *args, **kwargs):
+        if hasattr(request.data, 'dict'):
+            serializer = self.get_serializer(data=request.data.dict())
+        else:
+            serializer = self.get_serializer(data=request.data | kwargs)
         serializer.is_valid(raise_exception=True)
         return Response(status=200)
 
     def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
+        if hasattr(request.data, 'dict'):
+            serializer = self.get_serializer(data=request.data.dict())
+        else:
+            serializer = self.get_serializer(data=request.data | kwargs)
         serializer.is_valid(raise_exception=True)
         confirm_object = serializer.validated_data['confirm_object']
 
@@ -112,12 +118,18 @@ class PasswordResetView(BaseView):
         )
 
     def get(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data | kwargs)
+        if hasattr(request.data, 'dict'):
+            serializer = self.get_serializer(data=request.data.dict())
+        else:
+            serializer = self.get_serializer(data=request.data | kwargs)
         serializer.is_valid(raise_exception=True)
         return Response(status=200)
 
     def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data | kwargs)
+        if hasattr(request.data, 'dict'):
+            serializer = self.get_serializer(data=request.data.dict())
+        else:
+            serializer = self.get_serializer(data=request.data | kwargs)
         serializer.is_valid(raise_exception=True)
         reset_obj = serializer.validated_data['reset_obj']
 

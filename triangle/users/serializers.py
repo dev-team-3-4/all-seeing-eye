@@ -91,7 +91,7 @@ class EmailConfirmSerializer(Serializer):
         email = attrs.get('email')
         key = attrs.get('key')
 
-        if method == "GET":
+        if method == "PUT":
             if email and username:
                 user = get_object_or_404(User.objects, username=username)
                 if self.context.get('request').user != user:
@@ -146,12 +146,13 @@ class PasswordResetSerializer(Serializer):
     )
 
     def validate(self, attrs):
-        method = self.context.get('request').method
+        request = self.context.get('request')
+
         username = attrs.get('username')
         key = attrs.get('key')
         password = attrs.get('password')
 
-        if method == 'GET':
+        if request.method == 'GET':
             # create reset password request
             if username:
                 user = get_object_or_404(User.objects, username=username)
@@ -165,7 +166,7 @@ class PasswordResetSerializer(Serializer):
 
                 try:
                     send_mail("Reset Password",
-                              f"TODO: link\nkey: {reset_obj.key}",
+                              f"{request.META['HTTP_HOST']}/web/{username}/reset/{reset_obj.key}",
                               [user.email])
                 except Exception:
                     reset_obj.delete()
@@ -175,7 +176,7 @@ class PasswordResetSerializer(Serializer):
             else:
                 raise ValidationError('Must include "username".', 400)
 
-        elif method == 'POST':
+        elif request.method == 'POST':
             # do reset password
             if username and key and password:
                 reset_obj = PasswordResetObject.objects.filter(user__username=username,
@@ -191,7 +192,7 @@ class PasswordResetSerializer(Serializer):
                 raise ValidationError('Must include "username", "key" and "password".', 400)
 
         else:
-            raise MethodNotAllowed(method)
+            raise MethodNotAllowed(request.method)
 
         return attrs
 
@@ -230,6 +231,6 @@ class ChangePasswordSerializer(Serializer):
         instance.save()
 
         token = Token.objects.get_or_create(user=instance)[0]
-        self._data['token'] = token.key
+        self._data = {'token': token.key}
 
         return instance

@@ -11,9 +11,6 @@ function ()
       })
       return res;
     }
-    if (getCookie("token") != undefined) {
-        // alert("cookie already there!");
-    }
 
     function setCookie(name,value,days) {
         var expires = "";
@@ -23,6 +20,10 @@ function ()
             expires = "; expires=" + date.toUTCString();
         }
         document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+    }
+
+    if (getCookie("token") != undefined) {
+        // alert("cookie already there!");
     }
 
     function getAuthToken(l, p) {
@@ -40,7 +41,7 @@ function ()
             success: function (data) {
                 console.log(data);
                 setCookie("token", data["token"], 10);
-                window.location.replace("/user/" + l);
+                window.location.replace("/web/user/" + l);
             }
         });
     }
@@ -141,9 +142,8 @@ function ()
 
     $("#forgot_password_button").click((e) => {
         $.ajax({
-            url: "/user/" + $("#auth_login").val() + "/reset",
+            url: "/user/" + $("#auth_login").val() + "/reset/",
             method: "get",
-            dataType: "json",
             data: {},
             error: function(data) {
                 console.log(data);
