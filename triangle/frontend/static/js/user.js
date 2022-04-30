@@ -78,7 +78,8 @@ window.onload = function () {
         $.ajax({
             url: "/user/change/email/", // {{host}}user/{{username}}/change/password/
             method: "get",
-            data: {
+            dataType: "json",
+            body: {
                 "email": $("#email_input").val(),
                 username: username
             },
