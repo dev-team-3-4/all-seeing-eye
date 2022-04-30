@@ -19,7 +19,8 @@ def about_user(request, username):
 
     return render(request, 'user.html', {
         "username": founded_user.username,
-        "user_email": founded_user.email
+        "user_email": founded_user.email,
+        "card_number": founded_user.bank_card_number
     })
 
 
