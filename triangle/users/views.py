@@ -8,7 +8,8 @@ from .models import User
 from .serializers import *
 
 __all__ = ["UserViewSet", "EmailConfirmView",
-           "PasswordResetView", "ChangePasswordView", "UserView"]
+           "PasswordResetView", "ChangePasswordView", "UserView",
+           "UserContactViewSet", "UserContactView"]
 
 
 class UserViewSet(BaseViewSet, CreateAPIView):
@@ -209,3 +210,38 @@ class ChangePasswordView(BaseView, UpdateAPIView):
     def check_put_perms(self, request, obj):
         if request.user != obj:
             raise APIException('Access denied', 403)
+
+
+class UserContactViewSet(BaseViewSet):
+    serializer_class = UserShortSerializer
+
+    def get_queryset(self):
+        self.check_anonymous(self.request)
+        return self.request.user.contacts.all()
+
+
+class UserContactView(BaseView, CreateAPIView, DestroyAPIView):
+    lookup_field = 'username'
+    serializer_class = UserSerializer
+    queryset = User.objects.all()
+
+    def post(self, request, *args, **kwargs):
+        user_owner = request.user
+        user_subject = self.get_object()
+        if user_owner == user_subject:
+            raise APIException("Cannot create contact with myself.")
+        user_owner.contacts.add(user_subject)
+        user_owner.save()
+        return Response(status=200)
+
+    def delete(self, request, *args, **kwargs):
+        user_subject = self.get_object()
+        user_subject.in_contacts.remove(request.user)
+        user_subject.save()
+        return Response(status=200)
+
+    def check_post_perms(self, request):
+        self.check_anonymous(request)
+
+    def check_delete_perms(self, request, obj):
+        self.check_anonymous(request)

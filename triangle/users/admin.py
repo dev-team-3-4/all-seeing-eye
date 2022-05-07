@@ -16,7 +16,3 @@ class EmailConfirmObjectAdmin(admin.ModelAdmin):
 class PasswordResetObjectAdmin(admin.ModelAdmin):
     pass
 
-
-@admin.register(Contact)
-class ContactAdmin(admin.ModelAdmin):
-    pass
