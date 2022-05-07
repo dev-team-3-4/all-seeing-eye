@@ -67,7 +67,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.ban_until <= now() and self.email
 
     @property
-    def is_online(self):
+    def is_online(self) -> bool:
         if self.last_login is None:
             return False
         return now() - self.last_login < self.ONLINE_REQUEST_TIMEOUT

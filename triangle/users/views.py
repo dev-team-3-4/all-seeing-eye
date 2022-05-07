@@ -14,6 +14,43 @@ __all__ = ["UserViewSet", "EmailConfirmView",
 class UserViewSet(BaseViewSet, CreateAPIView):
     serializer_class = UserShortSerializer
 
+    def filter_queryset(self, queryset):
+        if "username" in self.request.query_params:
+            username = self.request.query_params.get("username")
+            return queryset.filter(username__iregex=f".*{username}.*")
+        return queryset
+
+    if coreapi_schema.is_enabled():
+        schema = ManualSchema(
+            fields=[
+                coreapi.Field(
+                    name="page",
+                    required=True,
+                    location='params',
+                    schema=coreschema.String(
+                        title="Page Number",
+                    ),
+                ),
+                coreapi.Field(
+                    name="page_size",
+                    required=True,
+                    location='params',
+                    schema=coreschema.String(
+                        title="Page Max Size",
+                    ),
+                ),
+                coreapi.Field(
+                    name="username",
+                    required=False,
+                    location='params',
+                    schema=coreschema.String(
+                        title="Username"
+                    ),
+                ),
+            ],
+            encoding="application/json",
+        )
+
 
 class UserView(BaseView, RetrieveAPIView, UpdateAPIView, DestroyAPIView):
     lookup_field = 'username'
