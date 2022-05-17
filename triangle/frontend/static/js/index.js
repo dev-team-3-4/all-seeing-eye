@@ -22,8 +22,8 @@ function ()
         document.cookie = name + "=" + (value || "")  + expires + "; path=/";
     }
 
-    if (getCookie("token") != undefined) {
-        // alert("cookie already there!");
+    if (getCookie("token") != undefined && getCookie("username") != undefined) {
+        location.replace("/web/user/" + getCookie("username"))
     }
 
     function getAuthToken(l, p) {
@@ -42,6 +42,8 @@ function ()
                 console.log(data);
                 setCookie("token", data["token"], 10);
                 window.location.replace("/web/user/" + l);
+
+                setCookie("username", l, 10);
             }
         });
     }
