@@ -14,16 +14,16 @@
     <title>Пользователь {{ username }}</title>
 
     <script>
-        var username = "{{ username }}";
+        const username = getCookie("username");
     </script>
 </head>
 <body>
 
 <div class="main">
     <div class="left_side_buttons">
-        <button class="nav_button">Профиль</button>
-        <button class="nav_button">Чаты</button>
-        <button class="nav_button">Контакты</button>
+        <button class="nav_button" onclick="location.replace('/web/user/' + username);">Профиль</button>
+        <button class="nav_button" onclick="location.replace('/web/chats')">Чаты</button>
+        <button class="nav_button" onclick="location.replace('/web/contacts')">Контакты</button>
         <button class="nav_button">Сделки</button>
         <button class="nav_button exit_button">Выход</button>
     </div>
@@ -31,8 +31,19 @@
     <div class="profile_container">
         <div class="buttons_container">
             <div style="display: flex; width: 100%; flex-direction: row;">
-                <img src="{% static 'img/camera_400.gif' %}" alt="Profile photo" class="profile_photo">
-                <input type="button" value="Загрузить изображение!" class="button upload_image_button" >
+
+                {% if profile_picture_url %}
+                    <img src="/media/{{ profile_picture_url }}" alt="Profile photo" class="profile_photo">
+
+                {% else %}
+                    <img src="{% static 'img/camera_400.gif' %}" alt="Profile photo" class="profile_photo">
+                {% endif %}
+
+                <label class="button upload_image_button upload_file_label">
+                    Загрузить изображение!
+                    <input type="file" style="display: none; width: 0;height: 0;" accept="image/png, image/jpeg, image/gif" id="upload_image_input"/>
+                </label>
+                <input type="button" value="Загрузить изображение!" class="button upload_image_button" style="display: none">
             </div>
 
             <form class="inputs_form" id="username_bank_card_id_form">

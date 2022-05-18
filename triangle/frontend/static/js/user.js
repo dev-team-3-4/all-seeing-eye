@@ -134,4 +134,31 @@ window.onload = function () {
             });
         }
     })
+
+    $("#upload_image_input").change((e) => {
+        let form_data = new FormData();
+        form_data.append('profile_photo', $("#upload_image_input")[0].files[0]);
+        form_data.append('username', $("#input_username").val());
+
+        $.ajax({
+            method: 'put',
+            enctype: 'multipart/form-data',
+            url: '/user/' + username + '/',
+            data: form_data,
+            processData: false,
+            contentType: false,
+            cache: false,
+            success: (answer) => {
+                window.location.reload();
+            },
+            error: (answer) => {
+                alert("error, check console!")
+                console.error(answer);
+            },
+            timeout: 600000,
+            headers: {
+                "Authorization": "Token " + getCookie("token"),
+            }
+        });
+    })
 }

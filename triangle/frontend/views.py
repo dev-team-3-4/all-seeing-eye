@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponseNotFound
 
-__all__ = ['index', 'about_user', 'reset_password']
+__all__ = ['index', 'about_user', 'reset_password', 'chats_page', 'contacts_page']
 
 from users.models import User
 
@@ -20,9 +20,18 @@ def about_user(request, username):
     return render(request, 'user.html', {
         "username": founded_user.username,
         "user_email": founded_user.email,
-        "card_number": founded_user.bank_card_number
+        "card_number": founded_user.bank_card_number,
+        "profile_picture_url": founded_user.profile_photo
     })
 
 
 def reset_password(request, username, key):
     return render(request, "reset_password.html", {"username": username, "key": key})
+
+
+def chats_page(request):
+    return render(request, "chats.html")
+
+
+def contacts_page(request):
+    return render(request, 'contacts.html')

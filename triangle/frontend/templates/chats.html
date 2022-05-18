@@ -1,0 +1,48 @@
+{% load static %}
+
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <link rel="stylesheet" href="{% static 'css/chats.css'%}" type="text/css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="{% static 'js/user.js' %}"></script>
+    <title>Ваши чаты</title>
+
+    <script>
+        const username = getCookie("username");
+    </script>
+</head>
+<body>
+
+<div class="main">
+    <div class="left_side_buttons">
+        <button class="nav_button" onclick="location.replace('/web/user/' + username);">Профиль</button>
+        <button class="nav_button" onclick="location.replace('/web/chats')">Чаты</button>
+        <button class="nav_button" onclick="location.replace('/web/contacts')">Контакты</button>
+        <button class="nav_button">Сделки</button>
+        <button class="nav_button exit_button">Выход</button>
+    </div>
+
+    <div class="profile_container">
+        <div>
+            <h2>Ваши чаты:</h2>
+        </div>
+        <ul class="chats_list">
+            <li class="chat_wrap">
+                <div class="chat_image">qwe</div>
+                <div class="chat_info">
+                    <h4 class="chat_name">Название чата</h4>
+                    <p class="chat_last_message">Последнее сообщение</p>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+</body>
+</html>
