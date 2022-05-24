@@ -128,3 +128,8 @@
 #delete_from_contacts {
     background-color: red;
 }
+
+.status_online {
+    color: white;
+    margin: 5px;
+}

@@ -31,13 +31,15 @@ def about_user(request, username):
             "user_email": founded_user.email,
             "card_number": founded_user.bank_card_number,
             "profile_picture_url": founded_user.profile_photo,
-            "self_page": True
+            "self_page": True,
+            "online": "Online" if founded_user.is_online else "Offline"
         })
     return render(request, 'user.html', {
         "already_in_contacts": logged_user.contacts.contains(founded_user),
         "username": founded_user.username,
         "user_email": founded_user.email,
-        "self_page": False
+        "self_page": False,
+        "online": "Online" if founded_user.is_online else "Offline"
     })
 
 

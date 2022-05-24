@@ -47,6 +47,8 @@
                 <input type="button" value="Загрузить изображение!" class="button upload_image_button" style="display: none">
             </div>
 
+        <p class="status_online">{{ online }}</p>
+
             <form class="inputs_form" id="username_bank_card_id_form">
                 <div class="inputs_container">
                     <input type="text" value="{{ username }}" class="text_input" id="input_username">
@@ -95,6 +97,7 @@
              <div class="inputs_form user_info">
                  <h1>{{ username }}</h1>
                  <h1>{{ user_email }}</h1>
+                 <h2>{{ online }}</h2>
              </div>
          <input type="hidden" value="{{ username }}" id="username_input"/>
          {% if already_in_contacts %}
