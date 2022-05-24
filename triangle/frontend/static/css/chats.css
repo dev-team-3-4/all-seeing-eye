@@ -127,3 +127,9 @@ body {
 .search_users_href:hover {
     filter: saturate(2);
 }
+
+
+.username_link {
+    text-decoration: none;
+    color: white;
+}

@@ -4,7 +4,7 @@ window.onload = () => {
             `<li class="chat_wrap">\n` +
             `   <img class="chat_image" src="${photo_link}" alt="Profile photo"/>\n` +
             `   <div class="chat_info">\n` +
-            `       <h4 class="chat_name">${username}</h4>\n` +
+            `       <h4 class="chat_name"><a href="/web/user/${username}" class="username_link">${username}</a></h4>\n` +
             `       <p class="chat_last_message"></p>\n` +
             `   </div>\n` +
             `</li>`;
