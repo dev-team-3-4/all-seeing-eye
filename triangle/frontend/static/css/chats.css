@@ -6,8 +6,9 @@
 
 .main {
     display: flex;
-    width: 100vw;
     height: 100vh;
+    flex-direction: row;
+    width: 100%;
 }
 
 .left_side_buttons {
@@ -16,17 +17,13 @@
 }
 
 .profile_container {
+    margin-top: 10px;
     flex-grow: 1;
     width: 100%;
-    height: 100%;
-}
-
-.profile_photo {
-    width: 200px;
-    height: 200px;
-
-    display: inline-block;
-    border-radius: 5px;
+    height: 100em;
+    margin-bottom: 15px;
+    overflow: hidden;
+    overflow-y: scroll;
 }
 
 .nav_button {
@@ -68,22 +65,19 @@
 }
 
 .chats_list {
-    background-color: red;
     list-style: none;
     margin: 0;
     padding: 0;
 }
 
 .chat_wrap {
-    background-color: red;
     height: 100px;
     display: flex;
-    margin: 5px 0;
     justify-content: space-between;
+    margin: 5px 0 0;
 }
 
 .chat_image {
-    background-color: purple;
     width: 100px;
     height:100px;
     flex-grow: 0;
@@ -92,12 +86,25 @@
 
 .chat_info {
     flex-grow: 1;
+    flex-shrink: 1;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 }
 
-.chat_last_message {
-    background-color: red;
-    margin-bottom: 15px;
+body {
+    overflow: hidden;
+}
+
+.contacts_searcher {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.search_names_input {
+    width: 100%;
+    height: 30px;
+    margin-top:10px;
+    background-color: white;
 }

@@ -10,7 +10,8 @@
 
     <link rel="stylesheet" href="{% static 'css/chats.css'%}" type="text/css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="{% static 'js/user.js' %}"></script>
+    <script src="{% static 'js/contacts.js' %}"></script>
+    <script src="{% static 'js/cookie_work.js' %}"></script>
     <title>Ваши контакты</title>
 
     <script>
@@ -28,60 +29,12 @@
         <button class="nav_button exit_button">Выход</button>
     </div>
 
-    <div class="profile_container">
-        <div>
-            <h2>Ваши чаты:</h2>
+    <div class="contacts_searcher">
+        <input class="search_names_input" type="text" placeholder="Поиск контактов">
+        <div class="profile_container" id="contacts_scroll">
+            <ul class="chats_list">
+            </ul>
         </div>
-        <ul class="chats_list">
-            <li class="chat_wrap">
-                <div class="chat_image">qwe</div>
-                <div class="chat_info">
-                    <h4 class="chat_name">Название чата</h4>
-                    <p class="chat_last_message">Последнее сообщение</p>
-                </div>
-            </li>
-
-             <li class="chat_wrap">
-                <div class="chat_image">qwe</div>
-                <div class="chat_info">
-                    <h4 class="chat_name">Название чата</h4>
-                    <p class="chat_last_message">Последнее сообщение</p>
-                </div>
-            </li>
-
-             <li class="chat_wrap">
-                <div class="chat_image">qwe</div>
-                <div class="chat_info">
-                    <h4 class="chat_name">Название чата</h4>
-                    <p class="chat_last_message">Последнее сообщение</p>
-                </div>
-            </li>
-
-
-             <li class="chat_wrap">
-                <div class="chat_image">qwe</div>
-                <div class="chat_info">
-                    <h4 class="chat_name">Название чата</h4>
-                    <p class="chat_last_message">Последнее сообщение</p>
-                </div>
-            </li>
-
-             <li class="chat_wrap">
-                <div class="chat_image">qwe</div>
-                <div class="chat_info">
-                    <h4 class="chat_name">Название чата</h4>
-                    <p class="chat_last_message">Последнее сообщение</p>
-                </div>
-            </li>
-
-             <li class="chat_wrap">
-                <div class="chat_image">qwe</div>
-                <div class="chat_info">
-                    <h4 class="chat_name">Название чата</h4>
-                    <p class="chat_last_message">Последнее сообщение</p>
-                </div>
-            </li>
-        </ul>
     </div>
 </div>
 
