@@ -161,4 +161,41 @@ window.onload = function () {
             }
         });
     })
+
+    $("#add_to_friends_button").click((e) => {
+        $.ajax({
+            url: "/user/" + $("#username_input").val() + "/contact/",
+            method: "post",
+            headers: {
+                "Authorization": "Token " + getCookie("token"),
+            },
+            error: (data) => {
+                alert("Error, check console")
+                console.log(data)
+            },
+            success: (data) => {
+                alert("Пользователь успешно добавлен в ваши контакты!")
+                location.reload()
+            }
+        });
+    });
+
+    $("#delete_from_contacts").click((e) => {
+        $.ajax({
+            url: "/user/" + $("#username_input").val() + "/contact/",
+            method: "delete",
+            headers: {
+                "Authorization": "Token " + getCookie("token"),
+            },
+            error: (data) => {
+                alert("Error, check console")
+                console.log(data)
+            },
+            success: (data) => {
+                alert("Пользователь успешно удалён из ваших контактов!")
+                location.reload()
+            }
+        });
+    });
+
 }

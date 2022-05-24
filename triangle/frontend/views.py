@@ -1,7 +1,9 @@
 from django.shortcuts import render
 from django.http import HttpResponseNotFound
+from http.cookies import SimpleCookie
+from rest_framework.authtoken.models import Token
 
-__all__ = ['index', 'about_user', 'reset_password', 'chats_page', 'contacts_page']
+__all__ = ['index', 'about_user', 'reset_password', 'chats_page', 'contacts_page', 'search_contacts_page']
 
 from users.models import User
 
@@ -17,11 +19,25 @@ def about_user(request, username):
         return HttpResponseNotFound("Пользователь с таким именем не найден!")
     founded_user = founded_user[0]  # TODO: Костыль, надо пофиксить
 
+    cookie = SimpleCookie()
+    cookie.load(request.headers['cookie'])
+    logged_username = cookie['username'].value
+
+    logged_user = Token.objects.get(key=cookie['token'].value).user
+
+    if username == logged_username:
+        return render(request, 'user.html', {
+            "username": founded_user.username,
+            "user_email": founded_user.email,
+            "card_number": founded_user.bank_card_number,
+            "profile_picture_url": founded_user.profile_photo,
+            "self_page": True
+        })
     return render(request, 'user.html', {
+        "already_in_contacts": logged_user.contacts.contains(founded_user),
         "username": founded_user.username,
         "user_email": founded_user.email,
-        "card_number": founded_user.bank_card_number,
-        "profile_picture_url": founded_user.profile_photo
+        "self_page": False
     })
 
 
@@ -35,3 +51,7 @@ def chats_page(request):
 
 def contacts_page(request):
     return render(request, 'contacts.html')
+
+
+def search_contacts_page(request):
+    return render(request, 'search_contacts.html')

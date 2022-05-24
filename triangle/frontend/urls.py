@@ -6,5 +6,6 @@ urlpatterns = [
     path('user/<str:username>', about_user),
     path('<str:username>/reset/<str:key>', reset_password),
     path('chats', chats_page),
-    path('contacts', contacts_page)
+    path('contacts', contacts_page),
+    path('search_contacts', search_contacts_page)
 ]

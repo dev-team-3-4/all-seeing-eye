@@ -116,3 +116,15 @@
     padding-top: 15px;
     height: 25px;
 }
+.user_info {
+    display: inline-block;
+    color: white;
+}
+
+.add_to_friend_button {
+    height: 40px;
+}
+
+#delete_from_contacts {
+    background-color: red;
+}

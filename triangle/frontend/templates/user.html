@@ -29,6 +29,7 @@
     </div>
 
     <div class="profile_container">
+    {% if self_page %}
         <div class="buttons_container">
             <div style="display: flex; width: 100%; flex-direction: row;">
 
@@ -81,6 +82,29 @@
             </div>
 
         </div>
+    {% else %}
+         <div class="buttons_container">
+            <div style="display: flex; width: 100%; flex-direction: row;">
+                {% if profile_picture_url %}
+                    <img src="/media/{{ profile_picture_url }}" alt="Profile photo" class="profile_photo">
+
+                {% else %}
+                    <img src="{% static 'img/camera_400.gif' %}" alt="Profile photo" class="profile_photo">
+                {% endif %}
+            </div>
+             <div class="inputs_form user_info">
+                 <h1>{{ username }}</h1>
+                 <h1>{{ user_email }}</h1>
+             </div>
+         <input type="hidden" value="{{ username }}" id="username_input"/>
+         {% if already_in_contacts %}
+             <button class="button update_button add_to_friend_button" id="delete_from_contacts">Удалить из контактов!</button>
+         {% else %}
+             <button class="button update_button add_to_friend_button" id="add_to_friends_button">Добавить в контакты!</button>
+         {% endif %}
+         </div>
+
+    {% endif %}
     </div>
 </div>
 

@@ -82,6 +82,7 @@
     height:100px;
     flex-grow: 0;
     margin: 0;
+    margin-right: 10px;
 }
 
 .chat_info {
@@ -107,4 +108,22 @@ body {
     height: 30px;
     margin-top:10px;
     background-color: white;
+}
+
+.chat_name {
+    color: white;
+}
+
+.search_users_href {
+    color: white;
+    text-decoration: none;
+    padding: 10px;
+    background-color: #4ab24b;
+    width: fit-content;
+    border-radius: 3px;
+    margin-top: 10px;
+}
+
+.search_users_href:hover {
+    filter: saturate(2);
 }
