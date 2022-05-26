@@ -13,7 +13,7 @@ class ChatViewset(BaseViewSet, CreateAPIView):
 
     def get_queryset(self):
         self.check_anonymous(self.request)
-        return self.request.user.chats
+        return self.request.user.chats.all()
 
     def check_post_perms(self, request):
         self.check_anonymous(request)
@@ -43,14 +43,16 @@ class MemberView(BaseView, CreateAPIView, UpdateAPIView, DestroyAPIView):
 
     def get_object(self):
         chat = get_object_or_404(Chat.objects, id=self.kwargs["chat_id"])
-        return get_object_or_404(chat.member_objects, user_id=self.kwargs["user_id"])
+        obj = get_object_or_404(chat.member_objects, user_id=self.kwargs["user_id"])
+        self.check_object_permissions(self.request, obj)
+        return obj
 
     def check_post_perms(self, request):
         self.check_anonymous(request)
         chat_members = get_object_or_404(Chat.objects, id=self.kwargs["chat_id"]).members
         if chat_members.filter(id=self.kwargs["user_id"]).first():
             raise APIException("The user already in the chat.")
-        if request.user not in chat_members and request.user.id != self.kwargs["user_id"]:
+        if not chat_members.contains(request.user) and request.user.id != self.kwargs["user_id"]:
             raise APIException("You cannot invite user in the chat without you.", 403)
 
         if isinstance(request.data, QueryDict):
@@ -90,8 +92,8 @@ class MessageViewSet(BaseViewSet, CreateAPIView):
         chat = self.get_chat()
         if isinstance(request.data, QueryDict):
             request.data._mutable = True
-        request.data['author'] = request.user
-        request.data['chat'] = chat
+        request.data['author_id'] = request.user.id
+        request.data['chat'] = chat.id
         request.data['is_banned'] = False
 
 
@@ -106,7 +108,7 @@ class MessageView(BaseView, UpdateAPIView, DestroyAPIView):
 
         if isinstance(request.data, QueryDict):
             request.data._mutable = True
-        request.data.pop('author', None)
+        request.data.pop('author_id', None)
         request.data.pop('chat', None)
 
         if 'is_banned' in request.data and chat_member.role < ChatMember.ROLES.MODERATOR:

@@ -1,6 +1,7 @@
 from rest_framework.serializers import *
 from users.serializers import UserShortSerializer
 from .models import *
+from django.core.files.storage import default_storage
 
 __all__ = ["ChatSerializer", "FullChatSerializer", "ChatMemberSerializer",
            "MessageSerializer", "ChatInviteSerializer"]
@@ -23,29 +24,49 @@ class ChatMemberSerializer(ModelSerializer):
 
 
 class FullChatSerializer(ModelSerializer):
-    members = ChatMemberSerializer(many=True)
+    member_objects = ChatMemberSerializer(many=True)
 
     class Meta:
         model = Chat
-        fields = ["id", "name", "photo", "members"]
-        read_only_fields = ["id", "members"]
+        fields = ["id", "name", "photo", "member_objects"]
+        read_only_fields = ["id", "member_objects"]
 
 
 class MessageSerializer(ModelSerializer):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        if self.instance:
-            if self.instance.is_banned:
-                self.Meta.fields = ["id", "author", "chat_id", "is_banned",
-                                    "send_time", "edit_time"]
+    author = UserShortSerializer(many=False, required=False)
+    author_id = IntegerField(write_only=True, required=True)
 
-    author = UserShortSerializer(many=False)
+    def save(self, **kwargs):
+        validated_data = {**self.validated_data, **kwargs}
+        attachments = validated_data.get('attachments', None)
+        if attachments:
+            for file in attachments:
+                file._name = default_storage.save("message_attachments/" + file.name, file)
+        return super(MessageSerializer, self).save(**validated_data)
+
+    def to_representation(self, instance):
+        new_attachments = list()
+        for file in instance.attachments:
+            if not hasattr(file, 'name'):
+                file_name = file
+                file = default_storage.open(file)
+                file.name = file_name
+
+            file.url = default_storage.url(file.name)
+            new_attachments.append(file)
+        if new_attachments:
+            instance.attachments = new_attachments
+
+        if instance.is_banned:
+            instance.text = 'Message was banned.'
+            instance.attachments = list()
+        return super(MessageSerializer, self).to_representation(instance)
 
     class Meta:
         model = Message
-        fields = ["id", "author", "chat", "is_banned",
+        fields = ["id", "author", "author_id", "chat", "is_banned",
                   "text", "attachments", "send_time", "edit_time"]
-        read_only_fields = ["id", "send_time", "edit_time"]
+        read_only_fields = ["id", "send_time", "edit_time", "author"]
         extra_kwargs = {
             "chat": {"write_only": True, "required": True}
         }
@@ -61,6 +82,9 @@ class ChatInviteSerializer(Serializer):
                                          user_id=validated_data['user_id'])
 
     def update(self, instance, validated_data):
+        if validated_data["role"] not in ChatMember.ROLES:
+            raise ValidationError("Unknown role id.", 400)
+
         instance.role = validated_data["role"]
         instance.save()
         return instance

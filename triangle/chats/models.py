@@ -37,7 +37,7 @@ class Message(Model):
     chat = ForeignKey(Chat, on_delete=CASCADE, related_name="messages")
     is_banned = BooleanField(default=False)
     text = CharField(max_length=512, blank=True, default="")
-    attachments = ArrayField(FileField(upload_to="message_attachments/", null=True, blank=True), 10)
+    attachments = ArrayField(FileField(upload_to="message_attachments/"), 10, default=list, blank=True)
     send_time = DateTimeField(auto_now_add=True)
     edit_time = DateTimeField(auto_now=True)
 
