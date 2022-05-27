@@ -20,7 +20,7 @@ class ChatSerializer(ModelSerializer):
             other_user = instance.members.exclude(id=request.user.id).first()
             ret['name'] = other_user.username
             if other_user.profile_photo:
-                ret['photo'] = other_user.profile_photo.url
+                ret['photo'] = request.build_absolute_uri(other_user.profile_photo.url)
             else:
                 ret['photo'] = None
         return ret
