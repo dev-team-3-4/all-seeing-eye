@@ -10,7 +10,7 @@ from django.utils.timezone import now
 from django.db.models import *
 
 
-__all__ = ["User", "EmailConfirmObject", "PasswordResetObject"]
+__all__ = ["User", "EmailConfirmObject", "PasswordResetObject", "Contact"]
 
 
 CHARS_POOL = string.ascii_lowercase + string.ascii_uppercase + string.digits
@@ -61,7 +61,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     ban_until = DateTimeField(default=now)
     registration_time = DateTimeField(auto_now_add=True)
     bank_card_number = CharField(max_length=16, null=True, blank=True)
-    contacts = ManyToManyField('User', 'in_contacts')
+    contacts = ManyToManyField('User', 'in_contacts', through='Contact')
 
     @property
     def is_active(self):
@@ -137,3 +137,13 @@ class PasswordResetObject(Model):
     def update_key(self):
         self.key = generate_key_for_password()
         self.created_time = now()
+
+
+class Contact(Model):
+    user_owner = ForeignKey('User', CASCADE, 'contact_objects')
+    user_subject = ForeignKey('User', CASCADE, 'in_contact_objects')
+    private_chat = ForeignKey('chats.Chat', SET_NULL, null=True)
+    deleted = BooleanField(default=False)
+
+    class Meta:
+        unique_together = ('user_owner', 'user_subject')

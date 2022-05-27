@@ -9,6 +9,8 @@ class Chat(Model):
     photo = ImageField(upload_to='chats_photos/', null=True, blank=True)
     members = ManyToManyField('users.User', 'chats', through='ChatMember')
 
+    are_private = BooleanField(default=False)
+
 
 class ChatMember(Model):
     class ROLES:

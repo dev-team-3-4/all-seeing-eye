@@ -11,7 +11,7 @@ from bases.views import get_object_or_none, get_object_or_404
 
 __all__ = ['UserShortSerializer', 'EmailConfirmSerializer',
            'PasswordResetSerializer', 'ChangePasswordSerializer',
-           'UserSerializer']
+           'UserSerializer', 'ContactSerializer']
 
 
 class UserShortSerializer(ModelSerializer):
@@ -234,3 +234,16 @@ class ChangePasswordSerializer(Serializer):
         self._data = {'token': token.key}
 
         return instance
+
+
+class ContactSerializer(ModelSerializer):
+    user_subject = UserShortSerializer(many=False, required=False, read_only=True)
+    user_subject_id = IntegerField(write_only=True, required=True)
+
+    class Meta:
+        model = Contact
+        fields = ["user_subject", "user_subject_id", "private_chat_id", "user_owner"]
+        read_only_fields = ["user_subject", "private_chat_id"]
+        extra_kwargs = {
+            "user_owner": {"write_only": True, "required": True}
+        }

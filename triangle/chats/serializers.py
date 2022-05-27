@@ -13,6 +13,18 @@ class ChatSerializer(ModelSerializer):
         fields = ["id", "name", "photo"]
         read_only_fields = ["id"]
 
+    def to_representation(self, instance: Chat):
+        ret = super(ChatSerializer, self).to_representation(instance)
+        if instance.are_private:
+            request = self.context.get('request')
+            other_user = instance.members.exclude(id=request.user.id).first()
+            ret['name'] = other_user.username
+            if other_user.profile_photo:
+                ret['photo'] = other_user.profile_photo.url
+            else:
+                ret['photo'] = None
+        return ret
+
 
 class ChatMemberSerializer(ModelSerializer):
     user = UserShortSerializer(many=False)
@@ -23,7 +35,7 @@ class ChatMemberSerializer(ModelSerializer):
         read_only_fields = ["user"]
 
 
-class FullChatSerializer(ModelSerializer):
+class FullChatSerializer(ChatSerializer):
     member_objects = ChatMemberSerializer(many=True)
 
     class Meta:
@@ -57,10 +69,11 @@ class MessageSerializer(ModelSerializer):
         if new_attachments:
             instance.attachments = new_attachments
 
+        ret = super(MessageSerializer, self).to_representation(instance)
         if instance.is_banned:
-            instance.text = 'Message was banned.'
-            instance.attachments = list()
-        return super(MessageSerializer, self).to_representation(instance)
+            ret.pop('text', None)
+            ret.pop('attachments', None)
+        return ret
 
     class Meta:
         model = Message
@@ -88,4 +101,3 @@ class ChatInviteSerializer(Serializer):
         instance.role = validated_data["role"]
         instance.save()
         return instance
-

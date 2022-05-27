@@ -1,7 +1,5 @@
-from rest_framework.compat import coreapi, coreschema
+from django.http import QueryDict
 from rest_framework.response import Response
-from rest_framework.schemas import ManualSchema
-from rest_framework.schemas import coreapi as coreapi_schema
 
 from bases.views import *
 from .models import User
@@ -21,37 +19,6 @@ class UserViewSet(BaseViewSet, CreateAPIView):
             return queryset.filter(username__iregex=f".*{username}.*")
         return queryset
 
-    if coreapi_schema.is_enabled():
-        schema = ManualSchema(
-            fields=[
-                coreapi.Field(
-                    name="page",
-                    required=True,
-                    location='params',
-                    schema=coreschema.String(
-                        title="Page Number",
-                    ),
-                ),
-                coreapi.Field(
-                    name="page_size",
-                    required=True,
-                    location='params',
-                    schema=coreschema.String(
-                        title="Page Max Size",
-                    ),
-                ),
-                coreapi.Field(
-                    name="username",
-                    required=False,
-                    location='params',
-                    schema=coreschema.String(
-                        title="Username"
-                    ),
-                ),
-            ],
-            encoding="application/json",
-        )
-
 
 class UserView(BaseView, RetrieveAPIView, UpdateAPIView, DestroyAPIView):
     lookup_field = 'username'
@@ -69,39 +36,6 @@ class UserView(BaseView, RetrieveAPIView, UpdateAPIView, DestroyAPIView):
 
 class EmailConfirmView(BaseView):
     serializer_class = EmailConfirmSerializer
-
-    if coreapi_schema.is_enabled():
-        schema = ManualSchema(
-            fields=[
-                coreapi.Field(
-                    name="username",
-                    required=False,
-                    location='form',
-                    schema=coreschema.String(
-                        title="Username"
-                    ),
-                ),
-                coreapi.Field(
-                    name="email",
-                    required=True,
-                    location='form',
-                    schema=coreschema.String(
-                        title="Email",
-                        description="Email address for confirmation",
-                    ),
-                ),
-                coreapi.Field(
-                    name="key",
-                    required=False,
-                    location='form',
-                    schema=coreschema.String(
-                        title="Confirmation Key",
-                        description="Confirmation key from received mail",
-                    ),
-                ),
-            ],
-            encoding="application/json",
-        )
 
     def put(self, request, *args, **kwargs):
         if hasattr(request.data, 'dict'):
@@ -130,30 +64,6 @@ class EmailConfirmView(BaseView):
 
 class PasswordResetView(BaseView):
     serializer_class = PasswordResetSerializer
-
-    if coreapi_schema.is_enabled():
-        schema = ManualSchema(
-            fields=[
-                coreapi.Field(
-                    name="key",
-                    required=True,
-                    location='form',
-                    schema=coreschema.String(
-                        title="Confirmation Key",
-                        description="Confirmation key from received mail",
-                    ),
-                ),
-                coreapi.Field(
-                    name="password",
-                    required=True,
-                    location='form',
-                    schema=coreschema.String(
-                        title="New password",
-                    ),
-                ),
-            ],
-            encoding="application/json",
-        )
 
     def get(self, request, *args, **kwargs):
         if hasattr(request.data, 'dict'):
@@ -184,64 +94,40 @@ class ChangePasswordView(BaseView, UpdateAPIView):
     queryset = User.objects.all()
     serializer_class = ChangePasswordSerializer
 
-    if coreapi_schema.is_enabled():
-        schema = ManualSchema(
-            fields=[
-                coreapi.Field(
-                    name="old_password",
-                    required=True,
-                    location='form',
-                    schema=coreschema.String(
-                        title="Old password",
-                    ),
-                ),
-                coreapi.Field(
-                    name="password",
-                    required=True,
-                    location='form',
-                    schema=coreschema.String(
-                        title="New password",
-                    ),
-                ),
-            ],
-            encoding="application/json",
-        )
-
     def check_put_perms(self, request, obj):
         if request.user != obj:
             raise APIException('Access denied', 403)
 
 
 class UserContactViewSet(BaseViewSet):
-    serializer_class = UserShortSerializer
+    serializer_class = ContactSerializer
 
     def get_queryset(self):
         self.check_anonymous(self.request)
-        return self.request.user.contacts.all()
+        return self.request.user.contact_objects.filter(deleted=False)
 
 
 class UserContactView(BaseView, CreateAPIView, DestroyAPIView):
-    lookup_field = 'username'
-    serializer_class = UserSerializer
-    queryset = User.objects.all()
+    lookup_url_kwarg = "username"
+    lookup_field = 'user_subject__username'
+    serializer_class = ContactSerializer
 
-    def post(self, request, *args, **kwargs):
-        user_owner = request.user
-        user_subject = self.get_object()
-        if user_owner == user_subject:
-            raise APIException("Cannot create contact with myself.")
-        user_owner.contacts.add(user_subject)
-        user_owner.save()
-        return Response(status=200)
-
-    def delete(self, request, *args, **kwargs):
-        user_subject = self.get_object()
-        user_subject.in_contacts.remove(request.user)
-        user_subject.save()
-        return Response(status=200)
+    def get_queryset(self):
+        return self.request.user.contact_objects.filter(deleted=False)
 
     def check_post_perms(self, request):
         self.check_anonymous(request)
+        if request.user.username == self.kwargs["username"]:
+            raise APIException("Cannot create contact with myself.")
+
+        if isinstance(request.data, QueryDict):
+            request.data._mutable = True
+        request.data["user_subject_id"] = get_object_or_404(User.objects, username=self.kwargs["username"]).id
+        request.data["user_owner"] = request.user.id
 
     def check_delete_perms(self, request, obj):
         self.check_anonymous(request)
+
+    def perform_destroy(self, instance):
+        instance.deleted = True
+        instance.save()

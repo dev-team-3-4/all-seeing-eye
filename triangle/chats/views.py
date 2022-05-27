@@ -1,11 +1,13 @@
 from django.http import QueryDict
+from rest_framework.response import Response
 
 from bases.views import *
+from users.models import User, Contact
 from .serializers import *
 from .models import *
 
 __all__ = ['ChatViewset', 'ChatView', 'MemberView',
-           'MessageViewSet', 'MessageView']
+           'MessageViewSet', 'MessageView', 'PerformPrivateChatView']
 
 
 class ChatViewset(BaseViewSet, CreateAPIView):
@@ -17,6 +19,9 @@ class ChatViewset(BaseViewSet, CreateAPIView):
 
     def check_post_perms(self, request):
         self.check_anonymous(request)
+        if isinstance(request.data, QueryDict):
+            request.data._mutable = True
+        request.data["are_private"] = False
 
     def post(self, request, *args, **kwargs):
         resp = super(ChatViewset, self).post(request, *args, **kwargs)
@@ -31,6 +36,8 @@ class ChatView(BaseView, RetrieveAPIView, UpdateAPIView, DestroyAPIView):
 
     def check_put_perms(self, request, obj):
         chat_member = get_object_or_404(obj.member_objects, user=request.user)
+        if obj.are_private:
+            raise APIException("Cannot edit a private chat.", 403)
         if chat_member.role not in (ChatMember.ROLES.CREATOR,
                                     ChatMember.ROLES.ADMIN):
             raise APIException("No access to edit the chat.", 403)
@@ -49,7 +56,10 @@ class MemberView(BaseView, CreateAPIView, UpdateAPIView, DestroyAPIView):
 
     def check_post_perms(self, request):
         self.check_anonymous(request)
-        chat_members = get_object_or_404(Chat.objects, id=self.kwargs["chat_id"]).members
+        chat = get_object_or_404(Chat.objects, id=self.kwargs["chat_id"])
+        if chat.are_private:
+            APIException("Cannot invite in a private chat.", 403)
+        chat_members = chat.members
         if chat_members.filter(id=self.kwargs["user_id"]).first():
             raise APIException("The user already in the chat.")
         if not chat_members.contains(request.user) and request.user.id != self.kwargs["user_id"]:
@@ -62,7 +72,10 @@ class MemberView(BaseView, CreateAPIView, UpdateAPIView, DestroyAPIView):
 
     def check_put_perms(self, request, obj):
         self.check_anonymous(request)
-        chat_members = get_object_or_404(Chat.objects, id=self.kwargs["chat_id"]).member_objects
+        chat = get_object_or_404(Chat.objects, id=self.kwargs["chat_id"])
+        if chat.are_private:
+            APIException("Cannot do this in a private chat.", 403)
+        chat_members = chat.member_objects
         user_member = get_object_or_404(chat_members, user=request.user)
 
         if user_member.role <= obj.role or request.data["role"] >= user_member.role:
@@ -70,8 +83,11 @@ class MemberView(BaseView, CreateAPIView, UpdateAPIView, DestroyAPIView):
 
     def check_delete_perms(self, request, obj):
         self.check_anonymous(request)
-        chat_members = get_object_or_404(Chat.objects, id=self.kwargs["chat_id"]).member_objects
+        chat = get_object_or_404(Chat.objects, id=self.kwargs["chat_id"])
+        chat_members = chat.member_objects
         user_member = get_object_or_404(chat_members, user=request.user)
+        if chat.are_private:
+            APIException("Cannot do this in a private chat.", 403)
 
         if user_member.role <= obj.role and user_member != obj:
             raise APIException("No access.", 403)
@@ -127,3 +143,33 @@ class MessageView(BaseView, UpdateAPIView, DestroyAPIView):
 
         if obj.author != request.user:
             raise APIException("Cannot remove not your messages.", 403)
+
+
+class PerformPrivateChatView(BaseView, CreateAPIView):
+    serializer_class = ChatSerializer
+
+    def check_post_perms(self, request):
+        self.check_anonymous(request)
+        if request.user == self.kwargs["username"]:
+            raise APIException("Cannot perform chat with myself.")
+
+    def post(self, request, *args, **kwargs):
+        user_first = request.user
+        user_second = get_object_or_404(User.objects, username=self.kwargs["username"])
+
+        contact_f_s = Contact.objects.get_or_create(user_owner=user_first, user_subject=user_second)[0]
+        contact_s_f = Contact.objects.get_or_create(user_owner=user_second, user_subject=user_first)[0]
+
+        chat = contact_f_s.private_chat or contact_s_f.private_chat
+        if chat is None:
+            chat = Chat.objects.create(name="Private chat", are_private=True)
+
+        contact_f_s.private_chat_id = chat
+        contact_s_f.private_chat_id = chat
+        contact_f_s.save()
+        contact_s_f.save()
+
+        ChatMember.objects.get_or_create(user=user_first, chat=chat)
+        ChatMember.objects.get_or_create(user=user_second, chat=chat)
+
+        return Response(self.get_serializer(instance=chat).data, 200)
