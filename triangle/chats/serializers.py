@@ -10,8 +10,8 @@ __all__ = ["ChatSerializer", "FullChatSerializer", "ChatMemberSerializer",
 class ChatSerializer(ModelSerializer):
     class Meta:
         model = Chat
-        fields = ["id", "name", "photo"]
-        read_only_fields = ["id"]
+        fields = ["id", "name", "photo", "are_private"]
+        read_only_fields = ["id", "are_private"]
 
     def to_representation(self, instance: Chat):
         ret = super(ChatSerializer, self).to_representation(instance)
@@ -40,8 +40,8 @@ class FullChatSerializer(ChatSerializer):
 
     class Meta:
         model = Chat
-        fields = ["id", "name", "photo", "member_objects"]
-        read_only_fields = ["id", "member_objects"]
+        fields = ["id", "name", "photo", "member_objects", "are_private"]
+        read_only_fields = ["id", "member_objects", "are_private"]
 
 
 class MessageSerializer(ModelSerializer):
