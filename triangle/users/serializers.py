@@ -242,8 +242,11 @@ class ContactSerializer(ModelSerializer):
 
     class Meta:
         model = Contact
-        fields = ["user_subject", "user_subject_id", "private_chat_id", "user_owner"]
-        read_only_fields = ["user_subject", "private_chat_id"]
+        fields = ["user_subject", "user_subject_id", "user_owner"]
+        read_only_fields = ["user_subject"]
         extra_kwargs = {
             "user_owner": {"write_only": True, "required": True}
         }
+
+    def to_representation(self, instance):
+        return super(ContactSerializer, self).to_representation(instance)['user_subject']
