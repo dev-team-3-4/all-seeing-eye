@@ -1,8 +1,9 @@
 from django.http import QueryDict
 from rest_framework.response import Response
+from django.db.utils import IntegrityError
 
 from bases.views import *
-from .models import User
+from .models import User, Contact
 from .serializers import *
 
 __all__ = ["UserViewSet", "EmailConfirmView",
@@ -127,6 +128,14 @@ class UserContactView(BaseView, CreateAPIView, DestroyAPIView):
 
     def check_delete_perms(self, request, obj):
         self.check_anonymous(request)
+
+    def perform_create(self, serializer):
+        try:
+            super(UserContactView, self).perform_create(serializer)
+        except IntegrityError:
+            instance = get_object_or_404(Contact.objects, **serializer.initial_data)
+            serializer.instance = instance
+            serializer.save(deleted=False)
 
     def perform_destroy(self, instance):
         instance.deleted = True
