@@ -67,6 +67,16 @@ class UserSerializer(ModelSerializer):
             "bank_card_number": {"write_only": True}
         }
 
+    def to_representation(self, instance):
+        ret = super(UserSerializer, self).to_representation(instance)
+        request = self.context.get('request')
+        if instance == request.user:
+            ret['email'] = instance.email
+            ret['bank_card_number'] = instance.bank_card_number
+        elif request.user.is_authenticated:
+            ret['in_contacts'] = request.user.contacts.contains(instance)
+
+        return ret
 
 class EmailConfirmSerializer(Serializer):
     username = CharField(
