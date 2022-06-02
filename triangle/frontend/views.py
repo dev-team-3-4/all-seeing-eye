@@ -3,8 +3,10 @@ from django.http import HttpResponseNotFound
 from http.cookies import SimpleCookie
 from rest_framework.authtoken.models import Token
 
-__all__ = ['index', 'about_user', 'reset_password', 'chats_page', 'contacts_page', 'search_contacts_page']
+__all__ = ['index', 'about_user', 'reset_password', 'chats_page', 'contacts_page',
+           'search_contacts_page', 'chat_with_users_page', 'create_chat']
 
+from chats.models import Chat
 from users.models import User
 
 
@@ -17,7 +19,7 @@ def about_user(request, username):
 
     if not founded_user.exists():
         return HttpResponseNotFound("Пользователь с таким именем не найден!")
-    founded_user = founded_user[0]  # TODO: Костыль, надо пофиксить
+    founded_user = founded_user[0]
 
     cookie = SimpleCookie()
     cookie.load(request.headers['cookie'])
@@ -35,11 +37,12 @@ def about_user(request, username):
             "online": "Online" if founded_user.is_online else "Offline"
         })
     return render(request, 'user.html', {
-        "already_in_contacts": logged_user.contacts.contains(founded_user),
+        "already_in_contacts": logged_user.contact_objects.filter(deleted=False, user_subject=founded_user).exists(),
         "username": founded_user.username,
         "user_email": founded_user.email,
         "self_page": False,
-        "online": "Online" if founded_user.is_online else "Offline"
+        "online": "Online" if founded_user.is_online else "Offline",
+        "profile_picture_url": founded_user.profile_photo
     })
 
 
@@ -57,3 +60,11 @@ def contacts_page(request):
 
 def search_contacts_page(request):
     return render(request, 'search_contacts.html')
+
+
+def chat_with_users_page(request, chat_id: int):
+    return render(request, "chat.html", {"chat_id": chat_id})
+
+
+def create_chat(request):
+    return render(request, "create_chat.html")

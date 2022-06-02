@@ -102,10 +102,13 @@
          <input type="hidden" value="{{ username }}" id="username_input"/>
          {% if already_in_contacts %}
              <button class="button update_button add_to_friend_button" id="delete_from_contacts">Удалить из контактов!</button>
+             <button class="button update_button add_to_friend_button" id="open_chat_button">Открыть чат</button>
          {% else %}
              <button class="button update_button add_to_friend_button" id="add_to_friends_button">Добавить в контакты!</button>
          {% endif %}
          </div>
+
+
 
     {% endif %}
     </div>

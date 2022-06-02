@@ -8,10 +8,10 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-    <link rel="stylesheet" href="{% static 'css/chats.css'%}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/create_chat.css'%}" type="text/css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="{% static 'js/user.js' %}"></script>
-    <script src="{% static 'js/chats.js' %}"></script>
+    <script src="{% static 'js/cookie_work.js' %}"></script>
+    <script src="{% static 'js/create_chat.js' %}"></script>
     <title>Ваши чаты</title>
 
     <script>
@@ -29,11 +29,19 @@
         <button class="nav_button exit_button">Выход</button>
     </div>
 
-    <div class="profile_container">
-        <a href="/web/create_chat" class="button create_chat_button">Создать чат</a>
+    <div class="chat_container">
+        <form id="create_chat_form">
+            <input type="text" placeholder="Название чата" class="chat_name_input" required id="chat_name_input">
 
-        <ul id="chats_list">
-        </ul>
+
+            <label class="button upload_file_button">
+                Загрузить изображение!
+                <input type="file" style="display: none; width: 0;height: 0;" accept="image/png, image/jpeg, image/gif" id="upload_image_input"/>
+            </label>
+
+
+            <input type="submit" value="Создать чат!" class="button">
+        </form>
     </div>
 </div>
 

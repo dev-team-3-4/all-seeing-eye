@@ -37,6 +37,7 @@ window.onload = function () {
                 console.log(data);
             },
             success: (data) => {
+                setCookie("username", $("#input_username").val())
                 location.replace("/web/user/" + $("#input_username").val());
             },
             headers: {
@@ -194,6 +195,24 @@ window.onload = function () {
             success: (data) => {
                 alert("Пользователь успешно удалён из ваших контактов!")
                 location.reload()
+            }
+        });
+    });
+
+
+    $("#open_chat_button").click((e) => {
+        $.ajax({
+            url: "/chat/private/" + $("#username_input").val() + "/",
+            method: "post",
+            headers: {
+                "Authorization": "Token " + getCookie("token"),
+            },
+            error: (data) => {
+                alert("Error, check console")
+                console.log(data)
+            },
+            success: (data) => {
+                location.href = "/web/chat/" + data["id"];
             }
         });
     });
