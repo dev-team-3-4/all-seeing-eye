@@ -6,7 +6,7 @@ window.onload = function () {
                 <img class="message_image" src="${image_link}">
                 <div class="info_message_container">
                     <div class="message_time_username">
-                        <h5 class="message_username">${username}</h5>
+                        <a style="text-decoration: none" href="/web/user/${username}"><h5 class="message_username">${username}</h5></a>
                         <h5 class="message_time">${time}</h5>
                     </div>
                     
