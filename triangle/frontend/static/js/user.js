@@ -35,11 +35,15 @@ window.onload = function () {
             }
             else {
                 $("#other_container").css("display", "block");
-
                 $("#username_h1").text(data["username"])
-
                 $("#username_input").val(data["username"]);
 
+                if(data["in_contacts"])
+                    $("#delete_from_contacts").css("display", "block");
+                else
+                    $("#add_to_friends_button").css("display", "block");
+
+                console.log(data)
             }
 
             let photo_link = "/static/img/camera_400.gif"
