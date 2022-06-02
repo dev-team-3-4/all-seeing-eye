@@ -70,6 +70,8 @@ class UserSerializer(ModelSerializer):
     def to_representation(self, instance):
         ret = super(UserSerializer, self).to_representation(instance)
         request = self.context.get('request')
+        if request is None:
+            return ret
         if instance == request.user:
             ret['email'] = instance.email
             ret['bank_card_number'] = instance.bank_card_number
@@ -77,6 +79,7 @@ class UserSerializer(ModelSerializer):
             ret['in_contacts'] = request.user.contacts.contains(instance)
 
         return ret
+
 
 class EmailConfirmSerializer(Serializer):
     username = CharField(
