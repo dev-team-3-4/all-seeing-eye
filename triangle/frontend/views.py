@@ -31,7 +31,7 @@ def about_user(request, username):
         return render(request, 'user.html', {
             "username": founded_user.username,
             "user_email": founded_user.email,
-            "card_number": founded_user.bank_card_number,
+            "card_number": '' if founded_user.bank_card_number is None else founded_user.bank_card_number,
             "profile_picture_url": founded_user.profile_photo,
             "self_page": True,
             "online": "Online" if founded_user.is_online else "Offline"
