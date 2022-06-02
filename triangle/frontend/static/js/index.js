@@ -22,7 +22,7 @@ function ()
         document.cookie = name + "=" + (value || "")  + expires + "; path=/";
     }
 
-    if (getCookie("token") != undefined && getCookie("username") != undefined) {
+    if (getCookie("token") != null && getCookie("username") != null && getCookie("token") != '' && getCookie("username") != '') {
         location.replace("/web/user/" + getCookie("username"))
     }
 

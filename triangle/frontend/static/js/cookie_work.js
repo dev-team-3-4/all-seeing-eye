@@ -7,9 +7,9 @@ function getCookie(cName) {
         if (val.indexOf(name) === 0) res = val.substring(name.length);
       })
       return res;
-    }
+}
 
-    function setCookie(name,value,days) {
+function setCookie(name,value,days) {
         var expires = "";
         if (days) {
             var date = new Date();
@@ -17,4 +17,10 @@ function getCookie(cName) {
             expires = "; expires=" + date.toUTCString();
         }
         document.cookie = name + "=" + (value || "")  + expires + "; path=/";
-    }
+}
+
+function clearCookie() {
+    setCookie("username", undefined, 100);
+    setCookie("token", undefined, 100);
+    location.href='/web';
+}
