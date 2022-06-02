@@ -13,7 +13,7 @@
     <script src="{% static 'js/user.js' %}"></script>
     <script src="{% static 'js/cookie_work.js' %}"></script>
 
-    <title>Пользователь {{ username }}</title>
+    <title id="title">Пользователь</title>
 
     <script>
         const username = getCookie("username");
@@ -31,16 +31,10 @@
     </div>
 
     <div class="profile_container">
-    {% if self_page %}
+        <div id="self_page_part" style="display: none;">
         <div class="buttons_container">
             <div style="display: flex; width: 100%; flex-direction: row;">
-
-                {% if profile_picture_url %}
-                    <img src="/media/{{ profile_picture_url }}" alt="Profile photo" class="profile_photo">
-
-                {% else %}
-                    <img src="{% static 'img/camera_400.gif' %}" alt="Profile photo" class="profile_photo">
-                {% endif %}
+                <img src="" alt="Profile photo" class="profile_photo">
 
                 <label class="button upload_image_button upload_file_label">
                     Загрузить изображение!
@@ -49,12 +43,12 @@
                 <input type="button" value="Загрузить изображение!" class="button upload_image_button" style="display: none">
             </div>
 
-        <p class="status_online">{{ online }}</p>
+        <p class="status_online"></p>
 
             <form class="inputs_form" id="username_bank_card_id_form">
                 <div class="inputs_container">
-                    <input type="text" value="{{ username }}" class="text_input" id="input_username">
-                    <input type="tel" inputmode="numeric" pattern="[0-9\s]{13,19}" autocomplete="cc-number" maxlength="19" placeholder="xxxx xxxx xxxx xxxx" class="text_input" id="bank_card_num" value="{{ card_number }}">
+                    <input type="text" value="" class="text_input" id="input_username">
+                    <input type="tel" inputmode="numeric" pattern="[0-9\s]{13,19}" autocomplete="cc-number" maxlength="19" placeholder="xxxx xxxx xxxx xxxx" class="text_input" id="bank_card_num" value="">
                 </div>
                 <input type="submit" value="Сохранить!" class="button update_button">
             </form>
@@ -69,7 +63,7 @@
 
             <form method="get" class="inputs_form" id="change_email_send_key">
                 <div class="inputs_container">
-                    <input type="email" value="{{ user_email }}" class="text_input" name="email_input" placeholder="email" required id="email_input">
+                    <input type="email" value="" class="text_input" name="email_input" placeholder="email" required id="email_input">
                 </div>
                 <input type="submit" value="Отправить код!" class="button update_button">
             </form>
@@ -86,21 +80,19 @@
             </div>
 
         </div>
-    {% else %}
+        </div>
+
+    <!-- ELSE -->
+    <div id="other_container" style="display: none">
          <div class="buttons_container">
             <div style="display: flex; width: 100%; flex-direction: row;">
-                {% if profile_picture_url %}
-                    <img src="/media/{{ profile_picture_url }}" alt="Profile photo" class="profile_photo">
-
-                {% else %}
-                    <img src="{% static 'img/camera_400.gif' %}" alt="Profile photo" class="profile_photo">
-                {% endif %}
+                <img src="" alt="Profile photo" class="profile_photo">
             </div>
              <div class="inputs_form user_info">
-                 <h1>{{ username }}</h1>
-                 <h2>{{ online }}</h2>
+                 <h1 id="username_h1"></h1>
+                 <h2 class="status_online"></h2>
              </div>
-         <input type="hidden" value="{{ username }}" id="username_input"/>
+         <input type="hidden" value="" id="username_input"/>
          {% if already_in_contacts %}
              <button class="button update_button add_to_friend_button" id="delete_from_contacts">Удалить из контактов!</button>
          {% else %}
@@ -108,7 +100,7 @@
          {% endif %}
          <button class="button update_button add_to_friend_button" id="open_chat_button">Открыть чат</button>
          </div>
-    {% endif %}
+    </div>
     </div>
 </div>
 

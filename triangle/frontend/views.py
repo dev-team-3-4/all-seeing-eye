@@ -15,34 +15,7 @@ def index(request):
 
 
 def about_user(request, username):
-    founded_user = User.objects.filter(username=username)
-
-    if not founded_user.exists():
-        return HttpResponseNotFound("Пользователь с таким именем не найден!")
-    founded_user = founded_user[0]
-
-    cookie = SimpleCookie()
-    cookie.load(request.headers['cookie'])
-    logged_username = cookie['username'].value
-
-    logged_user = Token.objects.get(key=cookie['token'].value).user
-
-    if username == logged_username:
-        return render(request, 'user.html', {
-            "username": founded_user.username,
-            "user_email": founded_user.email,
-            "card_number": '' if founded_user.bank_card_number is None else founded_user.bank_card_number,
-            "profile_picture_url": founded_user.profile_photo,
-            "self_page": True,
-            "online": "Online" if founded_user.is_online else "Offline"
-        })
-    return render(request, 'user.html', {
-        "already_in_contacts": logged_user.contact_objects.filter(deleted=False, user_subject=founded_user).exists(),
-        "username": founded_user.username,
-        "self_page": False,
-        "online": "Online" if founded_user.is_online else "Offline",
-        "profile_picture_url": founded_user.profile_photo
-    })
+    return render(request, 'user.html')
 
 
 def reset_password(request, username, key):

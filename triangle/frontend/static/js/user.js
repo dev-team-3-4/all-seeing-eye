@@ -22,6 +22,58 @@ function getCookie(cName) {
 
 
 window.onload = function () {
+
+    $.ajax({
+        url: "/user/" + location.href.substring(location.href.lastIndexOf("/") + 1, location.href.length),
+        method: "get",
+        success: (data) => {
+            if("bank_card_number" in data) {
+                $("#self_page_part").css("display", "block");
+                $("#email_input").val(data["email"]);
+                $("#input_username").val(data["username"]);
+                $("#bank_card_num").val(data["bank_card_number"]);
+            }
+            else {
+                $("#other_container").css("display", "block");
+
+                $("#username_h1").text(data["username"])
+
+                $("#username_input").val(data["username"]);
+
+            }
+
+            let photo_link = "/static/img/camera_400.gif"
+            if (data["profile_photo"] != null)
+                photo_link = data["profile_photo"]
+
+            $(".status_online").text(data["is_online"] ? "Online" : "Offline")
+            $(".profile_photo").attr("src", photo_link)
+            $("#title").text(data["username"])
+        },
+        error: (data) => {
+            alert("Пользователя с таким именем нет!")
+        },
+        headers: {
+            "Authorization": "Token " + getCookie("token"),
+        }
+    })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     $("#username_bank_card_id_form").submit((e) => {
         e.preventDefault();
         $.ajax({
@@ -130,7 +182,7 @@ window.onload = function () {
                 },
                 success: (data) => {
                     location.replace("/web");
-                    setCookie("token", undefined)
+                    setCookie("token", "")
                 }
             });
         }
