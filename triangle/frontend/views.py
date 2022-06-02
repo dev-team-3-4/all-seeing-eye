@@ -39,7 +39,6 @@ def about_user(request, username):
     return render(request, 'user.html', {
         "already_in_contacts": logged_user.contact_objects.filter(deleted=False, user_subject=founded_user).exists(),
         "username": founded_user.username,
-        "user_email": founded_user.email,
         "self_page": False,
         "online": "Online" if founded_user.is_online else "Offline",
         "profile_picture_url": founded_user.profile_photo
