@@ -86,6 +86,9 @@ class User(AbstractBaseUser, PermissionsMixin):
             self.auth_token.delete()
         super(User, self).set_password(raw_password)
 
+    def contain_in_contacts(self, other):
+        return self.contact_objects.filter(deleted=False, user_subject=other).exists()
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if "password" in kwargs:
