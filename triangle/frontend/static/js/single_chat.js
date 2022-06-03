@@ -53,7 +53,10 @@ window.onload = function () {
             $("#chat_name").text(data["name"]);
             if(!data["are_private"]) {
                 data["member_objects"].forEach((item) => {
-                    add_user(item["user"]["profile_photo"], item["user"]["username"], item["role"])
+                    let profile_photo_link = item["user"]["profile_photo"];
+                    if (profile_photo_link == null )
+                        profile_photo_link = "/static/img/camera_400.gif"
+                    add_user(profile_photo_link, item["user"]["username"], item["role"])
                 });
                 $("#users_list").css("visibility", "visible");
                 $("#admin_buttons_wrapper").css("visibility", "visible");
@@ -77,7 +80,10 @@ window.onload = function () {
                 var options = { year: 'numeric', month: 'long', day: 'numeric', hour: "numeric", minute: "2-digit" };
                 console.log(data)
                 data["results"].forEach((item) => {
-                    add_message(item["author"]["profile_photo"], item["text"], new Date(item["send_time"]).toLocaleDateString("ru-RU", options), item["author"]["username"])
+                    let profile_photo_link = item["author"]["profile_photo"]
+                    if (profile_photo_link == null )
+                        profile_photo_link = "/static/img/camera_400.gif"
+                    add_message(profile_photo_link, item["text"], new Date(item["send_time"]).toLocaleDateString("ru-RU", options), item["author"]["username"])
                 });
             }
         });
