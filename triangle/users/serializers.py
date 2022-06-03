@@ -76,7 +76,7 @@ class UserSerializer(ModelSerializer):
             ret['email'] = instance.email
             ret['bank_card_number'] = instance.bank_card_number
         elif request.user.is_authenticated:
-            ret['in_contacts'] = request.user.contacts.contains(instance)
+            ret['in_contacts'] = request.user.contain_in_contacts(instance)
 
         return ret
 
