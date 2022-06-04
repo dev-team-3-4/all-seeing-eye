@@ -14,8 +14,10 @@ class SmartContractSerializer(ModelSerializer):
 
     moderator = UserShortSerializer(read_only=True, many=False)
 
+    chat_id = IntegerField(required=False)
+
     class Meta:
         model = SmartContract
-        fields = ["first_user", "first_user_id", "second_user", "second_user_id",
+        fields = ["id", "first_user", "first_user_id", "second_user", "second_user_id",
                   "moderator", "create_time", "chat_id", "is_closed", "bank"]
-        read_only_fields = ["create_time", "is_closed", "bank"]
+        read_only_fields = ["id", "create_time", "is_closed", "bank"]

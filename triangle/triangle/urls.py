@@ -7,7 +7,7 @@ urlpatterns = [
     path('web/', include('frontend.urls')),
     path('user/', include('users.urls')),
     path('chat/', include('chats.urls')),
-    path('contract/', include('chats.urls')),
+    path('contract/', include('contracts.urls')),
 ]
 
 if settings.DEBUG:
