@@ -1,7 +1,8 @@
+from django.core.files.storage import default_storage
 from rest_framework.serializers import *
 from users.serializers import UserShortSerializer
 from .models import *
-from django.core.files.storage import default_storage
+from contracts.serializers import ModeratorInviteSerializer, WithdrawalFundsRequestSerializer
 
 __all__ = ["ChatSerializer", "FullChatSerializer", "ChatMemberSerializer",
            "MessageSerializer", "ChatInviteSerializer"]
@@ -70,7 +71,18 @@ class MessageSerializer(ModelSerializer):
             instance.attachments = new_attachments
 
         ret = super(MessageSerializer, self).to_representation(instance)
-        if instance.is_banned:
+
+        if hasattr(instance, 'moderatorinvite'):
+            ret.pop('text', None)
+            ret.pop('attachments', None)
+            ret.pop('is_banned', None)
+            ret['moderator_invite'] = ModeratorInviteSerializer(instance=instance.moderatorinvite).data
+        elif hasattr(instance, 'withdrawalfundsrequest'):
+            ret.pop('text', None)
+            ret.pop('attachments', None)
+            ret.pop('is_banned', None)
+            ret['withdrawal_request'] = WithdrawalFundsRequestSerializer(instance=instance.withdrawalfundsrequest).data
+        elif instance.is_banned:
             ret.pop('text', None)
             ret.pop('attachments', None)
         return ret

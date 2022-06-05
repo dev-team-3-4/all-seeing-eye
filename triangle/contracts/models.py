@@ -20,10 +20,7 @@ class ModeratorInvite(Message):
     first_user_agree = BooleanField(default=None, null=True)
     second_user_agree = BooleanField(default=None, null=True)
     moderator = ForeignKey("users.User", CASCADE, "moderator_invites")
-    refused = BooleanField(default=False)
-
-    class Meta:
-        unique_together = ("smart_contract", "moderator")
+    checked = BooleanField(default=False)
 
     @property
     def is_agreed(self):
