@@ -4,6 +4,7 @@ from rest_framework.authtoken.views import ObtainAuthToken
 
 urlpatterns = [
     path('', UserViewSet.as_view(), name='registry'),
+    path('me/', UserMeView.as_view(), name='me'),
     path('token/', ObtainAuthToken.as_view(), name='get token'),
     path('change/email/', EmailConfirmView.as_view(), name='change mail'),
     path('contacts/', UserContactViewSet.as_view(), name='contact set'),
