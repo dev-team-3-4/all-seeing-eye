@@ -3,16 +3,16 @@ from .models import *
 
 
 @admin.register(Chat)
-class UserAdmin(admin.ModelAdmin):
+class ChatAdmin(admin.ModelAdmin):
     pass
 
 
 @admin.register(Message)
-class EmailConfirmObjectAdmin(admin.ModelAdmin):
+class MessageAdmin(admin.ModelAdmin):
     pass
 
 
 @admin.register(ChatMember)
-class PasswordResetObjectAdmin(admin.ModelAdmin):
+class ChatMemberAdmin(admin.ModelAdmin):
     pass
 
