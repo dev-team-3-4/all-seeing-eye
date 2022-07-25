@@ -1,4 +1,6 @@
 from django.db.models import *
+
+from bases.exceptions import APIException
 from chats.models import Message
 
 __all__ = ["SmartContract", "ModeratorInvite", "WithdrawalFundsRequest"]
@@ -61,3 +63,26 @@ class WithdrawalFundsRequest(Message):
             return None
         else:
             return False
+
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        if self.is_agreed:
+            contract = self.smart_contract
+            if contract.bank < self.first_user_funds + self.second_user_funds + self.moderator_funds:
+                raise APIException("Not enough coins in contracts bank.", 403)
+            if self.first_user_funds > 0:
+                contract.first_user.coins += self.first_user_funds
+                contract.bank -= self.first_user_funds
+                contract.first_user.save()
+            if self.second_user_funds > 0:
+                contract.second_user.coins += self.second_user_funds
+                contract.bank -= self.second_user_funds
+                contract.second_user.save()
+            if self.moderator_funds > 0:
+                contract.moderator.coins += self.moderator_funds
+                contract.bank -= self.moderator_funds
+                contract.moderator.save()
+
+            contract.is_closed = self.close_contract
+            contract.save()
+
+        super(WithdrawalFundsRequest, self).save(force_insert, force_update, using, update_fields)

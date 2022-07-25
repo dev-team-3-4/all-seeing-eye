@@ -10,7 +10,8 @@ from chats.models import ChatMember, Chat
 from users.models import User
 
 __all__ = ["SmartContractViewSet", "SmartContractView", "InviteModeratorView",
-           "AgreeRequest", "InviteModeratorViewSet", "WithdrawalFundsRequestView"]
+           "AgreeRequest", "InviteModeratorViewSet", "WithdrawalFundsRequestView",
+           "BankInputView"]
 
 
 def get_all_user_contracts(user):
@@ -84,15 +85,14 @@ class InviteModeratorView(BaseView, CreateAPIView, UpdateAPIView, DestroyAPIView
         if contract.moderator is not None:
             raise APIException("Moderator already invited.", 403)
 
-        for invite in contract.moderator_invites.filter(refused=False).all():
-            v = invite.is_agreed
-            if v is None or v:
-                raise APIException("There are an active invite.", 403)
-
         if "user_id" in self.kwargs:
             if self.kwargs["user_id"] in (contract.first_user.id,
                                           contract.second_user.id):
                 raise APIException("This user already in smart-contract.", 403)
+            for invite in contract.moderator_invites.filter(checked=False, moderator_id=self.kwargs["user_id"]).all():
+                v = invite.is_agreed
+                if v is None or v:
+                    raise APIException("There are an active invite.", 403)
         else:
             user = User.objects.filter(role=User.ROLES.MODERATOR).\
                 exclude(id__in=(contract.first_user.id, contract.second_user.id)).\
@@ -101,6 +101,7 @@ class InviteModeratorView(BaseView, CreateAPIView, UpdateAPIView, DestroyAPIView
                 raise APIException("Sorry, now there are no moderators for your smart-contract. Try again later.", 500)
 
             self.kwargs["user_id"] = user.id
+            self.kwargs["auto_agree"] = True
 
     def check_put_perms(self, request, obj):
         self.check_anonymous(request)
@@ -127,6 +128,11 @@ class InviteModeratorView(BaseView, CreateAPIView, UpdateAPIView, DestroyAPIView
             smart_contract=contract,
             moderator_id=self.kwargs["user_id"]
         )
+        if self.kwargs.setdefault("auto_agree", False):
+            contract.first_user_agree = True
+            contract.second_user_agree = True
+            contract.text = 'Moderator auto-invite.'
+
         return Response(status=201)
 
     def put(self, request, *args, **kwargs):
@@ -205,6 +211,8 @@ class InviteModeratorViewSet(BaseViewSet):
 
 
 class WithdrawalFundsRequestView(BaseView, CreateAPIView):
+    serializer_class = WithdrawalFundsRequestSerializer
+
     def check_post_perms(self, request):
         self.check_anonymous(request)
         contract = get_object_or_404(SmartContract.objects, id=self.kwargs["contract_id"])
@@ -216,8 +224,8 @@ class WithdrawalFundsRequestView(BaseView, CreateAPIView):
         if contract.is_closed:
             raise APIException("Contract are closed.", 403)
 
-        if contract.moderator is None and request.data.get('moderator_funds', 0):
-            raise APIException("There are moderator's fund, but the contract haven't a moderator", 400)
+        if contract.moderator is None and request.data.get('moderator_funds', 0) > 0:
+            raise APIException("There are moderator's funds, but the contract haven't a moderator", 400)
         if request.data.get('first_user_funds', 0) < 0 or \
            request.data.get('second_user_funds', 0) < 0 or \
            request.data.get('moderator_funds', 0) < 0:
@@ -227,3 +235,18 @@ class WithdrawalFundsRequestView(BaseView, CreateAPIView):
             request.data._mutable = True
         request.data["author_id"] = request.user.id
         request.data["chat_id"] = contract.chat_id
+
+
+class BankInputView(BaseView, CreateAPIView):
+    serializer_class = BankInputSerializer
+
+    def check_post_perms(self, request):
+        self.check_anonymous(request)
+
+        user = request.user
+        contract = get_object_or_404(SmartContract.objects, id=self.kwargs['id'])
+        if user not in (contract.first_user, contract.second_user, contract.moderator):
+            raise APIException("This is not your smart-contract.", 403)
+
+        if user.coins < request.data['input_coins']:
+            raise APIException('Not enough coins on account.', 402)
