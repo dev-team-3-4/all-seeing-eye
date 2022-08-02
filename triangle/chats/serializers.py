@@ -1,47 +1,24 @@
+from django.core.files.storage import default_storage
 from rest_framework.serializers import *
 from users.serializers import UserShortSerializer
 from .models import *
-from django.core.files.storage import default_storage
+from contracts.serializers import ModeratorInviteSerializer, WithdrawalFundsRequestSerializer
 
 __all__ = ["ChatSerializer", "FullChatSerializer", "ChatMemberSerializer",
-           "MessageSerializer", "ChatInviteSerializer"]
+           "MessageSerializer", "ChatInviteSerializer", "MessageReadSerializer"]
 
 
-class ChatSerializer(ModelSerializer):
-    class Meta:
-        model = Chat
-        fields = ["id", "name", "photo", "are_private"]
-        read_only_fields = ["id", "are_private"]
+class MessageReadSerializer(Serializer):
+    new_messages = BooleanField(read_only=True)
 
-    def to_representation(self, instance: Chat):
-        ret = super(ChatSerializer, self).to_representation(instance)
-        if instance.are_private:
-            request = self.context.get('request')
-            other_user = instance.members.exclude(id=request.user.id).first()
-            ret['name'] = other_user.username
-            if other_user.profile_photo:
-                ret['photo'] = request.build_absolute_uri(other_user.profile_photo.url)
-            else:
-                ret['photo'] = None
-        return ret
-
-
-class ChatMemberSerializer(ModelSerializer):
-    user = UserShortSerializer(many=False)
-
-    class Meta:
-        model = ChatMember
-        fields = ["user", "role"]
-        read_only_fields = ["user"]
-
-
-class FullChatSerializer(ChatSerializer):
-    member_objects = ChatMemberSerializer(many=True)
-
-    class Meta:
-        model = Chat
-        fields = ["id", "name", "photo", "member_objects", "are_private"]
-        read_only_fields = ["id", "member_objects", "are_private"]
+    def save(self, **kwargs):
+        request = self.context.get['request']
+        message = self.instance
+        chat_member = ChatMember.objects.filter(user=request.user, chat_id=message.chat_id).one()
+        if not chat_member.last_checked_message or message.send_time > chat_member.last_checked_message.send_time:
+            chat_member.last_checked_message = message
+            chat_member.save()
+        self._data = {'new_messages': chat_member.last_checked_message == chat_member.chat.last_message}
 
 
 class MessageSerializer(ModelSerializer):
@@ -70,19 +47,66 @@ class MessageSerializer(ModelSerializer):
             instance.attachments = new_attachments
 
         ret = super(MessageSerializer, self).to_representation(instance)
-        if instance.is_banned:
+
+        if hasattr(instance, 'moderatorinvite'):
             ret.pop('text', None)
             ret.pop('attachments', None)
+            ret['moderator_invite'] = ModeratorInviteSerializer(instance=instance.moderatorinvite).data
+        elif hasattr(instance, 'withdrawalfundsrequest'):
+            ret.pop('text', None)
+            ret.pop('attachments', None)
+            ret['withdrawal_request'] = WithdrawalFundsRequestSerializer(instance=instance.withdrawalfundsrequest).data
         return ret
 
     class Meta:
         model = Message
-        fields = ["id", "author", "author_id", "chat", "is_banned",
+        fields = ["id", "author", "author_id", "chat",
                   "text", "attachments", "send_time", "edit_time"]
         read_only_fields = ["id", "send_time", "edit_time", "author"]
         extra_kwargs = {
             "chat": {"write_only": True, "required": True}
         }
+
+
+class ChatSerializer(ModelSerializer):
+    last_message = MessageSerializer()
+
+    class Meta:
+        model = Chat
+        fields = ["id", "name", "photo", "are_private", "last_message"]
+        read_only_fields = ["id", "are_private", "last_message"]
+
+    def to_representation(self, instance: Chat):
+        ret = super(ChatSerializer, self).to_representation(instance)
+        request = self.context.get('request')
+        if instance.are_private:
+            other_user = instance.members.exclude(id=request.user.id).first()
+            ret['name'] = other_user.username
+            if other_user.profile_photo:
+                ret['photo'] = request.build_absolute_uri(other_user.profile_photo.url)
+            else:
+                ret['photo'] = None
+        member = request.user.chat_objects.filter(chat_id=instance.id).one()
+        ret['new_messages'] = instance.last_message is not None and member.last_checked_message != instance.last_message
+        return ret
+
+
+class ChatMemberSerializer(ModelSerializer):
+    user = UserShortSerializer(many=False)
+
+    class Meta:
+        model = ChatMember
+        fields = ["user", "role"]
+        read_only_fields = ["user"]
+
+
+class FullChatSerializer(ChatSerializer):
+    member_objects = ChatMemberSerializer(many=True)
+
+    class Meta:
+        model = Chat
+        fields = ["id", "name", "photo", "member_objects", "are_private"]
+        read_only_fields = ["id", "member_objects", "are_private"]
 
 
 class ChatInviteSerializer(Serializer):

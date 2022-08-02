@@ -11,7 +11,7 @@ from bases.views import get_object_or_none, get_object_or_404
 
 __all__ = ['UserShortSerializer', 'EmailConfirmSerializer',
            'PasswordResetSerializer', 'ChangePasswordSerializer',
-           'UserSerializer', 'ContactSerializer']
+           'UserSerializer', 'ContactSerializer', 'UserFullSerializer']
 
 
 class UserShortSerializer(ModelSerializer):
@@ -58,27 +58,31 @@ class UserShortSerializer(ModelSerializer):
 
 
 class UserSerializer(ModelSerializer):
+    in_contacts = BooleanField(read_only=True, allow_null=True, default=False)
+
     class Meta:
         model = User
-        fields = ["id", "username", "profile_photo", "registration_time",
-                  "bank_card_number", "is_online"]
-        read_only_fields = ["id", "registration_time", "is_online"]
-        extra_kwargs = {
-            "bank_card_number": {"write_only": True}
-        }
+        fields = ["id", "username", "profile_photo", "registration_time", "is_online", "in_contacts"]
+        read_only_fields = fields
 
     def to_representation(self, instance):
         ret = super(UserSerializer, self).to_representation(instance)
         request = self.context.get('request')
         if request is None:
             return ret
-        if instance == request.user:
-            ret['email'] = instance.email
-            ret['bank_card_number'] = instance.bank_card_number
-        elif request.user.is_authenticated:
+        if request.user.is_authenticated:
             ret['in_contacts'] = request.user.contain_in_contacts(instance)
-
+        else:
+            ret.pop('in_contacts')
         return ret
+
+
+class UserFullSerializer(ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["id", "username", "profile_photo", "email", "registration_time",
+                  "ban_until", "bank_card_number", "is_online", "coins"]
+        read_only_fields = ["id", "registration_time", "is_online", "coins", "email", "ban_until"]
 
 
 class EmailConfirmSerializer(Serializer):

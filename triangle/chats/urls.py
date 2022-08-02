@@ -8,4 +8,5 @@ urlpatterns = [
     path('<int:chat_id>/message/', MessageViewSet.as_view(), name='messages'),
     path('<int:chat_id>/message/<int:id>/', MessageView.as_view(), name='message'),
     path('private/<str:username>/', PerformPrivateChatView.as_view(), name='private_chat'),
+    path('read_message/<int:id>/', ReadMessageView.as_view(), name='read_message'),
 ]
