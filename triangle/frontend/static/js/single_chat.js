@@ -14,6 +14,10 @@ window.onload = function () {
                         ${content}
                     </div>
                 </div>
+                <div class="edit_message">
+                    <button class="button edit_message_button">Ред.</button>
+                    <button class="button edit_message_button edit_message_button_red">Удалить</button>
+                </div>
             </div>
         </div>`
 
@@ -81,7 +85,7 @@ window.onload = function () {
                 console.log(data)
                 data["results"].forEach((item) => {
                     let profile_photo_link = item["author"]["profile_photo"]
-                    if (profile_photo_link == null )
+                    if (profile_photo_link == null)
                         profile_photo_link = "/static/img/camera_400.gif"
                     add_message(profile_photo_link, item["text"], new Date(item["send_time"]).toLocaleDateString("ru-RU", options), item["author"]["username"])
                 });

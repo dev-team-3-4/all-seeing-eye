@@ -107,10 +107,10 @@ WSGI_APPLICATION = 'triangle.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': environ['DB_NAME'],
+        'NAME': 'triangle', #environ['DB_NAME'],
         'USER': environ.setdefault('DB_USER', 'postgres'),
-        'PASSWORD': environ['DB_PASSWORD'],
-        'HOST': environ.setdefault('DB_HOST', '127.0.0.1'),
+        'PASSWORD': 'Valera', #environ['DB_PASSWORD'],
+        'HOST': environ.setdefault('DB_HOST', 'localhost'),
         'PORT': environ.setdefault('DB_PORT', '5432'),
     }
 }
