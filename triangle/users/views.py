@@ -6,9 +6,11 @@ from bases.views import *
 from .models import User, Contact
 from .serializers import *
 
+from contracts.views import get_all_user_contracts
+
 __all__ = ["UserViewSet", "EmailConfirmView",
            "PasswordResetView", "ChangePasswordView", "UserView",
-           "UserContactViewSet", "UserContactView"]
+           "UserContactViewSet", "UserContactView", "UserMeView"]
 
 
 class UserViewSet(BaseViewSet, CreateAPIView):
@@ -21,18 +23,24 @@ class UserViewSet(BaseViewSet, CreateAPIView):
         return queryset
 
 
-class UserView(BaseView, RetrieveAPIView, UpdateAPIView, DestroyAPIView):
-    lookup_field = 'username'
-    serializer_class = UserSerializer
+class UserMeView(BaseView, RetrieveAPIView, UpdateAPIView, DestroyAPIView):
+    serializer_class = UserFullSerializer
+
+    def get_object(self):
+        return self.request.user
 
     def check_put_perms(self, request, obj):
-        if request.user != obj:
-            raise APIException('Access denied', 403)
+        self.check_anonymous(request)
 
-    def check_delete_perms(self, request, obj):
-        if request.user != obj:
-            raise APIException('Access denied', 403)
-        # TODO check haven't active smart contracts
+    def check_delete_perms(self, request, obj: User):
+        self.check_anonymous(request)
+        if get_all_user_contracts(obj).filter(is_closed=False):
+            raise APIException("Cannot until have active smart contracts.", 403)
+
+
+class UserView(BaseView, RetrieveAPIView):
+    lookup_field = 'username'
+    serializer_class = UserSerializer
 
 
 class EmailConfirmView(BaseView):

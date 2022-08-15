@@ -7,7 +7,18 @@ from .serializers import *
 from .models import *
 
 __all__ = ['ChatViewset', 'ChatView', 'MemberView',
-           'MessageViewSet', 'MessageView', 'PerformPrivateChatView']
+           'MessageViewSet', 'MessageView', 'PerformPrivateChatView',
+           'ReadMessageView']
+
+
+class ReadMessageView(BaseView, UpdateAPIView):
+    serializer_class = MessageReadSerializer
+    queryset = Message.objects.all()
+
+    def check_put_perms(self, request, obj):
+        self.check_anonymous(request)
+        if not ChatMember.objects.filter(user=request.user, chat=obj.chat):
+            raise APIException("You cannot read this message.", 403)
 
 
 class ChatViewset(BaseViewSet, CreateAPIView):
@@ -110,7 +121,11 @@ class MessageViewSet(BaseViewSet, CreateAPIView):
             request.data._mutable = True
         request.data['author_id'] = request.user.id
         request.data['chat'] = chat.id
-        request.data['is_banned'] = False
+
+    def perform_create(self, serializer):
+        serializer.save()
+        serializer.instance.chat.last_message = serializer.instance
+        serializer.instance.chat.save()
 
 
 class MessageView(BaseView, UpdateAPIView, DestroyAPIView):
@@ -127,9 +142,6 @@ class MessageView(BaseView, UpdateAPIView, DestroyAPIView):
         request.data.pop('author_id', None)
         request.data.pop('chat', None)
 
-        if 'is_banned' in request.data and chat_member.role < ChatMember.ROLES.MODERATOR:
-            raise APIException("Cannot ban messages in this chat.", 403)
-
         if obj.author != request.user:
             for field in ("text", "attachments"):
                 if field in request.data:
@@ -143,6 +155,12 @@ class MessageView(BaseView, UpdateAPIView, DestroyAPIView):
 
         if obj.author != request.user:
             raise APIException("Cannot remove not your messages.", 403)
+
+    def perform_destroy(self, instance):
+        chat = instance.chat
+        instance.delete()
+        chat.last_message = chat.messages.ordering("-send_time").first()
+        chat.save()
 
 
 class PerformPrivateChatView(BaseView, CreateAPIView):
