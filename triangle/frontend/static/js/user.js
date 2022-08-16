@@ -27,7 +27,7 @@ window.onload = function () {
         url: "/user/" + location.href.substring(location.href.lastIndexOf("/") + 1, location.href.length),
         method: "get",
         success: (data) => {
-            if("bank_card_number" in data) {
+            if(location.href.substring(location.href.lastIndexOf("/") + 1, location.href.length) === getCookie("username")) {
                 $("#self_page_part").css("display", "block");
                 $("#email_input").val(data["email"]);
                 $("#input_username").val(data["username"]);
@@ -81,7 +81,7 @@ window.onload = function () {
     $("#username_bank_card_id_form").submit((e) => {
         e.preventDefault();
         $.ajax({
-            url: "/user/" + username + "/",
+            url: "/user/me/",
             method: "put",
             dataType: "json",
             data: {
@@ -120,6 +120,7 @@ window.onload = function () {
                 let token = data["token"]
                 setCookie("token", token);
                 alert("Пароль успешно заменён!");
+                location.reload();
 
             },
             headers: {
@@ -200,7 +201,7 @@ window.onload = function () {
         $.ajax({
             method: 'put',
             enctype: 'multipart/form-data',
-            url: '/user/' + username + '/',
+            url: '/user/me/',
             data: form_data,
             processData: false,
             contentType: false,
