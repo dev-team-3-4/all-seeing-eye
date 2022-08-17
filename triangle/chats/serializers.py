@@ -69,7 +69,7 @@ class MessageSerializer(ModelSerializer):
 
 
 class ChatSerializer(ModelSerializer):
-    last_message = MessageSerializer()
+    last_message = MessageSerializer(read_only=True, required=False)
 
     class Meta:
         model = Chat
@@ -86,7 +86,7 @@ class ChatSerializer(ModelSerializer):
                 ret['photo'] = request.build_absolute_uri(other_user.profile_photo.url)
             else:
                 ret['photo'] = None
-        member = request.user.chat_objects.filter(chat_id=instance.id).one()
+        member = request.user.chat_objects.filter(chat_id=instance.id).first()
         ret['new_messages'] = instance.last_message is not None and member.last_checked_message != instance.last_message
         return ret
 
@@ -105,8 +105,8 @@ class FullChatSerializer(ChatSerializer):
 
     class Meta:
         model = Chat
-        fields = ["id", "name", "photo", "member_objects", "are_private"]
-        read_only_fields = ["id", "member_objects", "are_private"]
+        fields = ["id", "name", "photo", "member_objects", "are_private", "last_message"]
+        read_only_fields = ["id", "member_objects", "are_private", "last_message"]
 
 
 class ChatInviteSerializer(Serializer):

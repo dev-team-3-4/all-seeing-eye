@@ -23,7 +23,7 @@ class ChatMember(Model):
     chat = ForeignKey(Chat, on_delete=CASCADE, related_name="member_objects")
     user = ForeignKey('users.User', on_delete=CASCADE, related_name="chat_objects")
     role = SmallIntegerField(default=ROLES.USER)
-    last_checked_message = ForeignKey("Message", on_delete=SET_NULL, null=True)
+    last_checked_message = ForeignKey("Message", on_delete=SET_NULL, null=True, default=None)
 
     class Meta:
         unique_together = ('chat', 'user')
@@ -43,4 +43,10 @@ class Message(Model):
     attachments = ArrayField(FileField(upload_to="message_attachments/"), 10, default=list, blank=True)
     send_time = DateTimeField(auto_now_add=True)
     edit_time = DateTimeField(auto_now=True)
+
+    def delete(self, using=None, keep_parents=False):
+        chat = self.chat
+        super(Message, self).delete(using, keep_parents)
+        chat.last_message = chat.messages.order_by("-send_time").first()
+        chat.save()
 
