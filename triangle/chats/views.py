@@ -159,7 +159,7 @@ class MessageView(BaseView, UpdateAPIView, DestroyAPIView):
     def perform_destroy(self, instance):
         chat = instance.chat
         instance.delete()
-        chat.last_message = chat.messages.ordering("-send_time").first()
+        chat.last_message = chat.messages.all().ordering("-send_time").first()
         chat.save()
 
 
@@ -168,7 +168,7 @@ class PerformPrivateChatView(BaseView, CreateAPIView):
 
     def check_post_perms(self, request):
         self.check_anonymous(request)
-        if request.user == self.kwargs["username"]:
+        if request.user.username == self.kwargs["username"]:
             raise APIException("Cannot perform chat with myself.")
 
     def post(self, request, *args, **kwargs):
