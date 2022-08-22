@@ -1,5 +1,48 @@
 window.onload = function () {
-    function add_message(image_link, content, time, username, role) {
+    const chat_id =  $("#chat_id").val();
+    var users_list_dict = {}
+    var editableMessageId = null;
+    const roles_list = [
+        "", // "юзер"
+        "Модератор",
+        "Админ",
+        "Владелец чата"
+    ]
+
+    function deleteMessageClosure(message_id) {
+        return function (){
+            $.ajax({
+                url: "/chat/" + chat_id + "/message/" + message_id + "/",
+                method: "delete",
+                headers: {
+                    "Authorization": "Token " + getCookie("token"),
+                },
+                success: (data) => {
+                    alert("Сообщение успешно удалено!")
+                },
+            });
+        }
+    }
+
+    function editMessageClosure (message_id) {
+
+    }
+
+    function add_message(image_link, content, time, username, message_id, add_edit_tab = false, add_remove_tab = false) {
+        let deleteMessageFunction = deleteMessageClosure(message_id);
+        let deleteMessageTab = "";
+        let editMessageTab = "";
+
+
+
+        if (add_remove_tab) {
+            deleteMessageTab = `<button class="button edit_message_button edit_message_button_red" id="delete_message_${message_id}_button">Удалить</button>`;
+        }
+
+        if (add_edit_tab) {
+            editMessageTab = `<button class="button edit_message_button" id="edit_message_${message_id}_button">Ред.</button>`;
+        }
+
         let message_template =
         `<div class="message_container">
             <div class="message_info">
@@ -15,29 +58,53 @@ window.onload = function () {
                     </div>
                 </div>
                 <div class="edit_message">
-                    <button class="button edit_message_button">Ред.</button>
-                    <button class="button edit_message_button edit_message_button_red">Удалить</button>
+                    ${editMessageTab}
+                    ${deleteMessageTab}
                 </div>
             </div>
         </div>`
 
         $("#messages_container").append(message_template)
+        $(`#delete_message_${message_id}_button`).on('click', (e) => {deleteMessageFunction()});
     }
 
-    function add_user(image_link, chat_username, role_id) {
+    function add_user(image_link, chat_username, role_id, user_id) {
+        let kick_button = "";
+
+        if (role_id < users_list_dict[getCookie("username")]["role"] - 1)
+            kick_button = `<h5 class="kick_user_button" onclick="" id="kick_user_${user_id}_button">Выгнать!</h5>`
+
         $("#users_list").append(`<div class="user_info">
              <img class="user_image" src="${image_link}">
                 <div class="user_details">
                     <h4 class="username">${chat_username}</h4>
-                    <h5 class="role">Роль: ${role_id}</h5>
+                    <h5 class="role">${roles_list[role_id]}</h5>
+                    ${kick_button}
             </div>
             <button class="button deal_button">Сделка!</button>
         </div>`);
+
+        $(`#kick_user_${user_id}_button`).on('click', (e) => {
+            $.ajax({
+                url: "/chat/" + chat_id + "/member/" + user_id + "/",
+                method: "delete",
+                headers: {
+                    "Authorization": "Token " + getCookie("token"),
+                },
+                success: (data) => {
+                    location.reload();
+                },
+                error: (data) => {
+                    alert("Unable to kick this user!");
+                }
+            });
+        });
     }
 
     const message_input = $("#message_input")
 
-    const chat_id =  $("#chat_id").val();
+
+
     $.ajax({
         url: "/chat/" + chat_id + "/",
         method: "get",
@@ -45,6 +112,7 @@ window.onload = function () {
             "Authorization": "Token " + getCookie("token"),
         },
         success: (data) => {
+            users_list_dict = {};
             console.log(data);
 
             let link = data["photo"];
@@ -55,17 +123,34 @@ window.onload = function () {
 
             $("#chat_image").attr("src", link);
             $("#chat_name").text(data["name"]);
+
             if(!data["are_private"]) {
                 data["member_objects"].forEach((item) => {
-                    let profile_photo_link = item["user"]["profile_photo"];
-                    if (profile_photo_link == null )
-                        profile_photo_link = "/static/img/camera_400.gif"
-                    add_user(profile_photo_link, item["user"]["username"], item["role"])
+                    if (item["user"]["username"] == getCookie("username")) {
+                        users_list_dict[item["user"]["username"]] = {};
+                        users_list_dict[item["user"]["username"]]["role"] = item["role"];
+                    }
                 });
+
+                data["member_objects"].forEach((item) => {
+                    let profile_photo_link = item["user"]["profile_photo"];
+                    if (profile_photo_link == null)
+                        profile_photo_link = "/static/img/camera_400.gif"
+                    add_user(profile_photo_link, item["user"]["username"], item["role"], item["user"]["id"]);
+
+                    users_list_dict[item["user"]["username"]] = {};
+                    users_list_dict[item["user"]["username"]]["role"] = item["role"];
+
+                });
+
                 $("#users_list").css("visibility", "visible");
                 $("#admin_buttons_wrapper").css("visibility", "visible");
             }
         },
+        error: (data) => {
+            alert("Вы были исключены из этого чата");
+            location.replace("/web/chats");
+        }
     });
 
     function loadMessages() {
@@ -84,11 +169,25 @@ window.onload = function () {
                 var options = { year: 'numeric', month: 'long', day: 'numeric', hour: "numeric", minute: "2-digit" };
                 console.log(data)
                 data["results"].forEach((item) => {
-                    let profile_photo_link = item["author"]["profile_photo"]
+                    let profile_photo_link = item["author"]["profile_photo"];
                     if (profile_photo_link == null)
-                        profile_photo_link = "/static/img/camera_400.gif"
-                    add_message(profile_photo_link, item["text"], new Date(item["send_time"]).toLocaleDateString("ru-RU", options), item["author"]["username"])
+                        profile_photo_link = "/static/img/camera_400.gif";
+
+                    add_message(
+                        profile_photo_link,
+                        item["text"],
+                        new Date(item["send_time"]).toLocaleDateString("ru-RU", options),
+                        item["author"]["username"],
+                        item["id"],
+                        item["author"]["username"] === getCookie("username"),
+                        item["author"]["username"] === getCookie("username")
+                        //(users_list_dict[item["author"]["username"]]["role"] <= users_list_dict[getCookie("username")]["role"]) || (item["author"]["username"] === getCookie("username"))
+                    )
                 });
+            },
+            error: (data) => {
+                alert("Вы были исключены из этого чата");
+                location.replace("/web/chats");
             }
         });
     }
@@ -112,7 +211,7 @@ window.onload = function () {
                     "text": message
                 },
                 success: (data) => {
-                    add_message("", message, "", "")
+                    add_message("", message, "", "", data["id"])
                 }
             });
         }
@@ -151,7 +250,7 @@ window.onload = function () {
                 page_size: 10
             },
             success: (data) => {
-                total_users = data["count"]
+                let total_users = data["count"]
                 data["results"].forEach((item) => {
                     addContactToList(item["username"], item["profile_photo"] == null ? "/static/img/camera_400.gif" : item["profile_photo"], item["id"]);
                 });
