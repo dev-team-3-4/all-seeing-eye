@@ -28,7 +28,10 @@ window.onload = function () {
 
     }
 
-    function add_message(image_link, content, time, username, message_id, add_edit_tab = false, add_remove_tab = false) {
+    function add_message(
+        image_link, content, time, username, message_id, add_edit_tab = false, add_remove_tab = false,
+        attachments = []
+    ) {
         let deleteMessageFunction = deleteMessageClosure(message_id);
         let deleteMessageTab = "";
         let editMessageTab = "";
@@ -43,6 +46,20 @@ window.onload = function () {
             editMessageTab = `<button class="button edit_message_button" id="edit_message_${message_id}_button">Ред.</button>`;
         }
 
+        let attachments_html = '';
+
+        attachments.forEach((image_url, index) => {
+            let file_name = image_url.substring(image_url.lastIndexOf('/')+1)
+
+            attachments_html +=
+                `<a href="${image_url}" target="_blank">
+                    <div class="message_attachments">
+                        <img src="/static/img/file_sign.png" class="file_sign_image">
+                        <div class="attachments_name">${file_name}</div>
+                    </div>
+                </a>`
+        });
+
         let message_template =
         `<div class="message_container">
             <div class="message_info">
@@ -55,6 +72,7 @@ window.onload = function () {
                     
                     <div class="message_content">
                         ${content}
+                        ${attachments_html}
                     </div>
                 </div>
                 <div class="edit_message">
@@ -199,8 +217,10 @@ window.onload = function () {
                         item["author"]["username"],
                         item["id"],
                         item["author"]["username"] === getCookie("username"),
-                        item["author"]["username"] === getCookie("username")
+                        item["author"]["username"] === getCookie("username"),
+                        item["attachments"]
                         //(users_list_dict[item["author"]["username"]]["role"] <= users_list_dict[getCookie("username")]["role"]) || (item["author"]["username"] === getCookie("username"))
+
                     )
                 });
             },
@@ -226,9 +246,10 @@ window.onload = function () {
 
         let form_data = new FormData();
         jQuery.each(attachments, function(i, file) {
-            form_data.append('file-'+i, file);
-            console.log(file);
+            form_data.append('attachments', file);
+            console.log('attachments_'+i, file);
         });
+
         form_data.append("text", message);
 
         if(message.length !== 0) {

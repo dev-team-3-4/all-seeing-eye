@@ -296,6 +296,7 @@ body {
     padding-top: 1px;
     padding-bottom: 1px;
     margin-right: 5px;
+    height: 30px;
 }
 
 .edit_message_button_red {
@@ -323,4 +324,22 @@ body {
     padding-top: 3px;
     margin-top: 0;
     font-size: small;
+}
+
+.message_attachments {
+    display: flex;
+    flex-direction: row;
+}
+
+.file_sign_image {
+    width: 30px;
+    height: 30px;
+    max-width: 100px;
+    max-height: 100px;
+}
+
+.attachments_name {
+    padding-top: 7px;
+    height: 30px;
+
 }
