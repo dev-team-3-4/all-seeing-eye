@@ -311,3 +311,16 @@ body {
     color: red;
     cursor: pointer;
 }
+
+#leave_chat_button {
+    background-color: #ff3131;
+}
+
+.attachments_button {
+    height: 10px;
+    width: 100px;
+    text-align: center;
+    padding-top: 3px;
+    margin-top: 0;
+    font-size: small;
+}

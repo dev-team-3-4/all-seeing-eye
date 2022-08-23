@@ -5,12 +5,12 @@ window.onload = function () {
     const roles_list = [
         "", // "юзер"
         "Модератор",
-        "Админ",
+        "Администратор",
         "Владелец чата"
     ]
 
     function deleteMessageClosure(message_id) {
-        return function (){
+        return function () {
             $.ajax({
                 url: "/chat/" + chat_id + "/message/" + message_id + "/",
                 method: "delete",
@@ -101,6 +101,24 @@ window.onload = function () {
         });
     }
 
+    $("#leave_chat_button").on('click', (e) => {
+        console.log(users_list_dict)
+        console.log(users_list_dict[getCookie("username")]["id"])
+        $.ajax({
+            url: "/chat/" + chat_id + "/member/" + users_list_dict[getCookie("username")]["id"] + "/",
+            method: "delete",
+            headers: {
+                "Authorization": "Token " + getCookie("token"),
+            },
+            success: (data) => {
+                location.reload();
+            },
+            error: (data) => {
+                alert("Невозможно выйти из чата!")
+            }
+        })
+    });
+
     const message_input = $("#message_input")
 
 
@@ -113,6 +131,7 @@ window.onload = function () {
         },
         success: (data) => {
             users_list_dict = {};
+            console.log("READING INFO ABOUT CHAT")
             console.log(data);
 
             let link = data["photo"];
@@ -140,6 +159,7 @@ window.onload = function () {
 
                     users_list_dict[item["user"]["username"]] = {};
                     users_list_dict[item["user"]["username"]]["role"] = item["role"];
+                    users_list_dict[item["user"]["username"]]["id"] = item["user"]["id"];
 
                 });
 
@@ -148,7 +168,6 @@ window.onload = function () {
             }
         },
         error: (data) => {
-            alert("Вы были исключены из этого чата");
             location.replace("/web/chats");
         }
     });
@@ -186,7 +205,6 @@ window.onload = function () {
                 });
             },
             error: (data) => {
-                alert("Вы были исключены из этого чата");
                 location.replace("/web/chats");
             }
         });
@@ -197,21 +215,38 @@ window.onload = function () {
     setInterval(loadMessages, 3000);
 
 
+    var attachments = undefined;
+    $("#attachments_input").change((e) => {
+        attachments = $("#attachments_input")[0].files;
+        console.log(attachments);
+    });
+
     $("#send_message_button").on("click", (e) => {
         let message = message_input.val()
+
+        let form_data = new FormData();
+        jQuery.each(attachments, function(i, file) {
+            form_data.append('file-'+i, file);
+            console.log(file);
+        });
+        form_data.append("text", message);
+
         if(message.length !== 0) {
             message_input.val("")
             $.ajax({
                 url: "/chat/" + chat_id + "/message/",
+                enctype: 'multipart/form-data',
                 method: "post",
+                processData: false,
+                contentType: false,
+                cache: false,
                 headers: {
                     "Authorization": "Token " + getCookie("token"),
                 },
-                data: {
-                    "text": message
-                },
+                data: form_data,
                 success: (data) => {
                     add_message("", message, "", "", data["id"])
+                    attachments = undefined;
                 }
             });
         }
