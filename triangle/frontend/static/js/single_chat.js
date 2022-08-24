@@ -1,7 +1,7 @@
 window.onload = function () {
     const chat_id =  $("#chat_id").val();
     var users_list_dict = {}
-    var editableMessageId = null;
+    var editableMessageId = undefined;
     const roles_list = [
         "", // "юзер"
         "Модератор",
@@ -25,7 +25,10 @@ window.onload = function () {
     }
 
     function editMessageClosure (message_id) {
-
+        return function () {
+            editableMessageId = message_id;
+            message_input.val($(`#message_${message_id}_content`).text());
+        }
     }
 
     function add_message(
@@ -33,6 +36,8 @@ window.onload = function () {
         attachments = []
     ) {
         let deleteMessageFunction = deleteMessageClosure(message_id);
+        let editMessageFunction = editMessageClosure(message_id)
+
         let deleteMessageTab = "";
         let editMessageTab = "";
 
@@ -71,7 +76,7 @@ window.onload = function () {
                     </div>
                     
                     <div class="message_content">
-                        ${content}
+                        <div id="message_${message_id}_content">${content}</div>
                         ${attachments_html}
                     </div>
                 </div>
@@ -84,6 +89,7 @@ window.onload = function () {
 
         $("#messages_container").append(message_template)
         $(`#delete_message_${message_id}_button`).on('click', (e) => {deleteMessageFunction()});
+        $(`#edit_message_${message_id}_button`).on('click', (e) => {editMessageFunction()})
     }
 
     function add_user(image_link, chat_username, role_id, user_id) {
@@ -254,22 +260,41 @@ window.onload = function () {
 
         if(message.length !== 0) {
             message_input.val("")
-            $.ajax({
-                url: "/chat/" + chat_id + "/message/",
-                enctype: 'multipart/form-data',
-                method: "post",
-                processData: false,
-                contentType: false,
-                cache: false,
-                headers: {
-                    "Authorization": "Token " + getCookie("token"),
-                },
-                data: form_data,
-                success: (data) => {
-                    add_message("", message, "", "", data["id"])
-                    attachments = undefined;
-                }
-            });
+            if (editableMessageId != undefined) {
+                $.ajax({
+                    url: "/chat/" + chat_id + "/message/" + editableMessageId + "/",
+                    enctype: 'multipart/form-data',
+                    method: "put",
+                    processData: false,
+                    contentType: false,
+                    cache: false,
+                    headers: {
+                        "Authorization": "Token " + getCookie("token"),
+                    },
+                    data: form_data,
+                    success: (data) => {
+                        // add_message("", message, "", "", data["id"])
+                        attachments = undefined;
+                    }
+                });
+            } else {
+                $.ajax({
+                    url: "/chat/" + chat_id + "/message/",
+                    enctype: 'multipart/form-data',
+                    method: "post",
+                    processData: false,
+                    contentType: false,
+                    cache: false,
+                    headers: {
+                        "Authorization": "Token " + getCookie("token"),
+                    },
+                    data: form_data,
+                    success: (data) => {
+                        // add_message("", message, "", "", data["id"])
+                        attachments = undefined;
+                    }
+                });
+            }
         }
     });
 
