@@ -1,5 +1,5 @@
 window.onload = () => {
-    function addChat(name, link, id) {
+    function addChat(name, link, id, last_message='') {
         if(link == undefined) {
             link = "/static/img/camera_400.gif";
         }
@@ -8,6 +8,7 @@ window.onload = () => {
             <img class="chat_image" src="${link}"/>
             <div class="chat_info">
                 <h4 class="chat_name">${name}</h4>
+                <div class="chat_last_message">${last_message}</div>
             </div>
         </li></a>`);
     }
@@ -26,7 +27,7 @@ window.onload = () => {
             console.log(answer)
 
             answer["results"].forEach((item) => {
-               addChat(item["name"], item["photo"], item["id"]);
+               addChat(item["name"], item["photo"], item["id"], item["last_message"]["text"]);
             });
         },
         error: (answer) => {

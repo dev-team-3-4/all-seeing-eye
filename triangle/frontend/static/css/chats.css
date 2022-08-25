@@ -143,3 +143,7 @@ body {
     margin-bottom: 10px;
     width: fit-content;
 }
+
+.chat_last_message {
+    color: white;
+}
