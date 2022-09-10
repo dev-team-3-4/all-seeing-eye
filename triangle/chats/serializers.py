@@ -22,8 +22,7 @@ class MessageReadSerializer(Serializer):
 
 
 class MessageSerializer(ModelSerializer):
-    author = UserShortSerializer(many=False, required=False)
-    author_id = IntegerField(write_only=True, required=True)
+    author = UserShortSerializer(many=False, read_only=True)
 
     def save(self, **kwargs):
         validated_data = {**self.validated_data, **kwargs}
@@ -60,12 +59,9 @@ class MessageSerializer(ModelSerializer):
 
     class Meta:
         model = Message
-        fields = ["id", "author", "author_id", "chat",
+        fields = ["id", "author",
                   "text", "attachments", "send_time", "edit_time"]
         read_only_fields = ["id", "send_time", "edit_time", "author"]
-        extra_kwargs = {
-            "chat": {"write_only": True, "required": True}
-        }
 
 
 class ChatSerializer(ModelSerializer):
