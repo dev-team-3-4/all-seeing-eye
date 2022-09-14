@@ -27,7 +27,13 @@ window.onload = () => {
             console.log(answer)
 
             answer["results"].forEach((item) => {
-               addChat(item["name"], item["photo"], item["id"], item["last_message"]["text"]);
+                let last_message = item["last_message"]
+
+                if (last_message == undefined)
+                    last_message = ""
+                else
+                    last_message = item["last_message"]["text"]
+               addChat(item["name"], item["photo"], item["id"], );
             });
         },
         error: (answer) => {

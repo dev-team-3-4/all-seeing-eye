@@ -258,7 +258,7 @@ window.onload = function () {
 
         form_data.append("text", message);
 
-        if(message.length !== 0) {
+        if(message.length !== 0 || form_data.forEach.length != 0) {
             message_input.val("")
             if (editableMessageId != undefined) {
                 $.ajax({
