@@ -1,4 +1,17 @@
 window.onload = function () {
+    document.addEventListener(
+        'keydown', (event) => {
+            let name = event.key;
+            let code = event.code;
+            // Alert the key name and key code on keydown
+            if (code == "Escape" && editableMessageId != undefined) {
+                attachments = undefined;
+                editableMessageId = undefined;
+                message_input.val("");
+            }
+        }, false);
+
+
     const chat_id =  $("#chat_id").val();
     var users_list_dict = {}
     var editableMessageId = undefined;
@@ -209,7 +222,7 @@ window.onload = function () {
             },
             success: (data) => {
                 $("#messages_container").html("")
-                var options = { year: 'numeric', month: 'long', day: 'numeric', hour: "numeric", minute: "2-digit" };
+                let options = { year: 'numeric', month: 'long', day: 'numeric', hour: "numeric", minute: "2-digit" };
                 console.log(data)
                 data["results"].forEach((item) => {
                     let profile_photo_link = item["author"]["profile_photo"];
@@ -258,7 +271,9 @@ window.onload = function () {
 
         form_data.append("text", message);
 
-        if(message.length !== 0) {
+        console.log(attachments)
+
+        if(message.length !== 0 || attachments.length != 0) {
             message_input.val("")
             if (editableMessageId != undefined) {
                 $.ajax({
@@ -345,7 +360,6 @@ window.onload = function () {
         });
 
     }
-
     function scrollEvent() {
         if (my_div.offsetHeight + my_div.scrollTop >= my_div.scrollHeight) {
             console.log("scrolled to end")

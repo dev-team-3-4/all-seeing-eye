@@ -274,4 +274,35 @@ window.onload = function () {
         });
     });
 
+    $("#deal_button").click((e) => {
+        $.ajax({
+            url: "/chat/private/" + $("#username_input").val() + "/",
+            method: "post",
+            headers: {
+                "Authorization": "Token " + getCookie("token"),
+            },
+            error: (data) => {
+                alert("Error, check console")
+                console.log(data)
+            },
+            success: (data_chat_id) => {
+                let chat_id = data_chat_id["id"];
+                $.ajax({
+                    url: "",
+                    method: "post",
+                    headers: {
+                        "Authorization": "Token " + getCookie("token"),
+                    },
+                    error: (data) => {
+                        alert("Error, check console")
+                        console.log(data)
+                    },
+                    success: (data) => {
+                        location.href = "/web/chat/" + data["id"];
+                    }
+                });
+            }
+        });
+    });
+
 }
