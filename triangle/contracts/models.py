@@ -14,7 +14,7 @@ class SmartContract(Model):
     chat = ForeignKey("chats.Chat", CASCADE, related_name="contracts")
     create_time = DateTimeField(auto_now_add=True)
     is_closed = BooleanField(default=False)
-    bank = DecimalField(max_digits=10, decimal_places=2, default=0)
+    bank = BigIntegerField(default=0)
 
 
 class ModeratorInvite(Message):
@@ -39,9 +39,9 @@ class WithdrawalFundsRequest(Message):
     second_user_agree = BooleanField(default=None, null=True)
     moderator_agree = BooleanField(default=None, null=True)
 
-    first_user_funds = DecimalField(max_digits=10, decimal_places=2, default=0)
-    second_user_funds = DecimalField(max_digits=10, decimal_places=2, default=0)
-    moderator_funds = DecimalField(max_digits=10, decimal_places=2, default=0)
+    first_user_funds = BigIntegerField(default=0)
+    second_user_funds = BigIntegerField(default=0)
+    moderator_funds = BigIntegerField(default=0)
 
     close_contract = BooleanField(default=False)
 

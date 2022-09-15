@@ -60,8 +60,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     role = SmallIntegerField(default=ROLES.USER)
     ban_until = DateTimeField(default=now)
     registration_time = DateTimeField(auto_now_add=True)
-    bank_card_number = CharField(max_length=16, null=True, blank=True)
-    coins = DecimalField(max_digits=10, decimal_places=2, default=0)
+    coins = BigIntegerField(default=0)
     contacts = ManyToManyField('User', 'in_contacts', through='Contact')
 
     @property
