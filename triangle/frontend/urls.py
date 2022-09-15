@@ -10,5 +10,6 @@ urlpatterns = [
     path('search_contacts', search_contacts_page),
     path('chat/<int:chat_id>', chat_with_users_page),
     path('create_chat', create_chat),
-    path('deals', contracts_list)
+    path('deals', contracts_list),
+    path('create_deal', create_deal),
 ]
