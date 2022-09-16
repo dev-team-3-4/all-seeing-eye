@@ -28,10 +28,22 @@ window.onload = function () {
         method: "get",
         success: (data) => {
             if(location.href.substring(location.href.lastIndexOf("/") + 1, location.href.length) === getCookie("username")) {
+                console.log(data)
                 $("#self_page_part").css("display", "block");
                 $("#email_input").val(data["email"]);
                 $("#input_username").val(data["username"]);
                 $("#bank_card_num").val(data["bank_card_number"]);
+
+                $.ajax({
+                    url: "/user/me",
+                    method: "get",
+                    success: (data) => {
+                        $("#balance").text("Баланс: " + data["coins"]);
+                    },
+                    headers: {
+                       "Authorization": "Token " + getCookie("token"),
+                    }
+                });
             }
             else {
                 $("#other_container").css("display", "block");
@@ -68,8 +80,53 @@ window.onload = function () {
 
 
 
+    $("#income_button").click(() => {
+        let hash = $("#income_hash_input").val();
 
+        $.ajax({
+            url:"/payments/input/",
+            method: "post",
+            dataType: "json",
+            data:{
+                "hash": hash
+            },
+            success: (data) => {
+                location.reload();
+            },
+            error: (data) => {
+                alert("Error, check console!")
+                console.log(data)
+            },
+            headers: {
+                "Authorization": "Token " + getCookie("token")
+            }
+        })
+    })
 
+    $("#outcome_button").click(() => {
+        let price = +$("#input_sum").val()
+        let address = $("#input_address").val()
+
+        $.ajax({
+            url: "/payments/output/",
+            method: "post",
+            dataType: "json",
+            data: {
+                "coins_amount": price,
+                "blockchain_address": address
+            },
+            success: (data) => {
+                location.reload();
+            },
+            error: (data) => {
+                alert("Error, check console!")
+                console.log(data)
+            },
+            headers: {
+                "Authorization": "Token " + getCookie("token")
+            }
+        })
+    })
 
 
 
@@ -85,8 +142,7 @@ window.onload = function () {
             method: "put",
             dataType: "json",
             data: {
-                "username": $("#input_username").val(),
-                "bank_card_number": $("#bank_card_num").val(),
+                "username": $("#input_username").val()
             },
             error: (data) => {
                 alert("Error, check console");

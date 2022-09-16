@@ -133,3 +133,42 @@
     color: white;
     margin: 5px;
 }
+
+
+.payment_info {
+    display: flex;
+    flex-direction: column;
+    margin-left: 50px;
+}
+
+#balance {
+    color: white;
+    margin-top: 20px;
+}
+
+.income_form {
+    display: flex;
+    flex-direction: row;
+}
+
+#income_button {
+    background-color: #4ab24b;
+    margin-top: 0;
+    width: 200px;
+}
+
+.out_form {
+    display: flex;
+    flex-direction: row;
+}
+
+.inputs_out_form {
+    display: flex;
+    flex-direction: column;
+}
+
+#outcome_button {
+    width: 200px;
+    background-color: #4ab24b;
+    margin-top: 0;
+}

@@ -41,6 +41,22 @@
                     <input type="file" style="display: none; width: 0;height: 0;" accept="image/png, image/jpeg, image/gif" id="upload_image_input"/>
                 </label>
                 <input type="button" value="Загрузить изображение!" class="button upload_image_button" style="display: none">
+
+                <div class="payment_info">
+                    <div class="income_form">
+                        <input class="text_input" type="text" placeholder="Хэш" id="income_hash_input">
+                        <button id="income_button" class="button">Пополнить</button>
+                    </div>
+                    <div class="out_form">
+                        <div class="inputs_out_form">
+                            <input class="text_input" type="text" placeholder="Адрес" id="input_address">
+                            <input class="text_input" type="number" placeholder="Сумма" id="input_sum">
+                        </div>
+                        <button id="outcome_button" class="button">Вывести</button>
+                    </div>
+
+                    <h4 id="balance"></h4>
+                </div>
             </div>
 
         <p class="status_online"></p>
@@ -48,7 +64,6 @@
             <form class="inputs_form" id="username_bank_card_id_form">
                 <div class="inputs_container">
                     <input type="text" value="" class="text_input" id="input_username">
-                    <input type="tel" inputmode="numeric" pattern="[0-9\s]{13,19}" autocomplete="cc-number" maxlength="19" placeholder="xxxx xxxx xxxx xxxx" class="text_input" id="bank_card_num" value="">
                 </div>
                 <input type="submit" value="Сохранить!" class="button update_button">
             </form>
