@@ -13,11 +13,11 @@ __all__ = ['ChatViewset', 'ChatView', 'MemberView',
 
 class ReadMessageView(BaseView, UpdateAPIView):
     serializer_class = MessageReadSerializer
-    queryset = Message.objects.all()
+    queryset = Chat.objects.all()
 
     def check_put_perms(self, request, obj):
         self.check_anonymous(request)
-        if not ChatMember.objects.filter(user=request.user, chat=obj.chat):
+        if not ChatMember.objects.filter(user=request.user, chat=obj):
             raise APIException("You cannot read this message.", 403)
 
 

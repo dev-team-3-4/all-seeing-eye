@@ -14,8 +14,13 @@ class MessageReadSerializer(Serializer):
 
     def save(self, **kwargs):
         request = self.context.get('request')
-        message = self.instance
-        chat_member = ChatMember.objects.filter(user=request.user, chat_id=message.chat_id).first()
+        chat = self.instance
+        message = chat.last_message
+        if message is None:
+            self._data = {'new_messages': False}
+            return
+
+        chat_member = ChatMember.objects.filter(user=request.user, chat=chat).first()
         if not chat_member.last_checked_message or message.send_time > chat_member.last_checked_message.send_time:
             chat_member.last_checked_message = message
             chat_member.save()
