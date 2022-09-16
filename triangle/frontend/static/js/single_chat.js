@@ -271,8 +271,6 @@ window.onload = function () {
 
         form_data.append("text", message);
 
-        console.log(attachments)
-
         if(message.length !== 0 || attachments.length != 0) {
             message_input.val("")
             if (editableMessageId != undefined) {
