@@ -288,6 +288,7 @@ window.onload = function () {
                     success: (data) => {
                         // add_message("", message, "", "", data["id"])
                         attachments = undefined;
+                        editableMessageId = undefined;
                     }
                 });
             } else {
@@ -305,6 +306,7 @@ window.onload = function () {
                     success: (data) => {
                         // add_message("", message, "", "", data["id"])
                         attachments = undefined;
+                        editableMessageId = undefined;
                     }
                 });
             }
