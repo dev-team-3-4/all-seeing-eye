@@ -116,14 +116,11 @@ class MessageViewSet(BaseViewSet, CreateAPIView):
 
     def check_post_perms(self, request):
         self.check_anonymous(request)
-        chat = self.get_chat()
         if isinstance(request.data, QueryDict):
             request.data._mutable = True
-        request.data['author_id'] = request.user.id
-        request.data['chat'] = chat.id
 
     def perform_create(self, serializer):
-        serializer.save()
+        serializer.save(author_id=self.request.user.id, chat=self.get_chat())
         serializer.instance.chat.last_message = serializer.instance
         serializer.instance.chat.save()
 

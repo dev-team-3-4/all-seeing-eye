@@ -81,7 +81,7 @@ class UserFullSerializer(ModelSerializer):
     class Meta:
         model = User
         fields = ["id", "username", "profile_photo", "email", "registration_time",
-                  "ban_until", "bank_card_number", "is_online", "coins"]
+                  "ban_until", "is_online", "coins"]
         read_only_fields = ["id", "registration_time", "is_online", "coins", "email", "ban_until"]
 
 

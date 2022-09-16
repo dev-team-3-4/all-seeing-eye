@@ -35,7 +35,7 @@ class SmartContractViewSet(BaseViewSet, CreateAPIView):
             request.data._mutable = True
         request.data["first_user_id"] = request.user.id
 
-        if request.data["second_user_id"] == request.data["first_user_id"]:
+        if request.data["second_user_id"] == self.request.data["first_user_id"]:
             raise APIException("Cannot create contract with yourself", 400)
         if request.data.get("chat_id"):
             get_object_or_404(ChatMember.objects,
@@ -46,20 +46,15 @@ class SmartContractViewSet(BaseViewSet, CreateAPIView):
                               user_id=request.data["second_user_id"])
 
     def perform_create(self, serializer):
-        flag = 'chat_id' not in self.request.data
-        chat = None  # IDE requires
-        if flag:
-            chat = Chat.objects.create(name="New Smart-contract chat")
-            ChatMember.objects.create(chat_id=chat.id, role=ChatMember.ROLES.ADMIN,
-                                      user_id=serializer.initial_data["first_user_id"])
-            ChatMember.objects.create(chat_id=chat.id, role=ChatMember.ROLES.ADMIN,
-                                      user_id=serializer.initial_data["second_user_id"])
-            serializer._validated_data["chat_id"] = chat.id
+        chat = Chat.objects.create(name="New Smart-contract chat")
+        ChatMember.objects.create(chat_id=chat.id, role=ChatMember.ROLES.ADMIN,
+                                  user_id=self.request.user.id)
+        ChatMember.objects.create(chat_id=chat.id, role=ChatMember.ROLES.ADMIN,
+                                  user_id=serializer.initial_data["second_user_id"])
         try:
-            serializer.save()
+            serializer.save(first_user_id=self.request.user.id, chat=chat)
         except Exception:
-            if flag:
-                chat.delete()
+            chat.delete()
             raise
 
 
@@ -120,7 +115,7 @@ class InviteModeratorView(BaseView, CreateAPIView, UpdateAPIView, DestroyAPIView
 
     def post(self, request, *args, **kwargs):
         contract = get_object_or_404(SmartContract.objects, id=self.kwargs["contract_id"])
-        ModeratorInvite.objects.create(
+        obj = ModeratorInvite.objects.create(
             chat_id=contract.chat_id,
             text='Moderator invite.',
             author_id=request.user.id,
@@ -129,9 +124,10 @@ class InviteModeratorView(BaseView, CreateAPIView, UpdateAPIView, DestroyAPIView
             moderator_id=self.kwargs["user_id"]
         )
         if self.kwargs.setdefault("auto_agree", False):
-            contract.first_user_agree = True
-            contract.second_user_agree = True
-            contract.text = 'Moderator auto-invite.'
+            obj.first_user_agree = True
+            obj.second_user_agree = True
+            obj.text = 'Moderator auto-invite.'
+            obj.save()
 
         return Response(status=201)
 
