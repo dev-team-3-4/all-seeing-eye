@@ -24,7 +24,7 @@ window.onload = () => {
                method: "put",
                dataType: "json",
                success: (data) => {
-                   location.replace(`/web/chat/${id}/`);
+                   location.replace(`/web/chat/${id}`);
                },
                 headers: {
                     "Authorization": "Token " + getCookie("token"),
