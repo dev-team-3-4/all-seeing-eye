@@ -147,3 +147,7 @@ body {
 .chat_last_message {
     color: white;
 }
+
+.chat_frame {
+    cursor: pointer;
+}
