@@ -1,4 +1,5 @@
 from django.core.files.storage import default_storage
+from rest_framework.generics import get_object_or_404
 from rest_framework.serializers import *
 from users.serializers import UserShortSerializer
 from .models import *
@@ -14,7 +15,7 @@ class MessageReadSerializer(Serializer):
     def save(self, **kwargs):
         request = self.context.get('request')
         message = self.instance
-        chat_member = ChatMember.objects.filter(user=request.user, chat_id=message.chat_id).one()
+        chat_member = ChatMember.objects.filter(user=request.user, chat_id=message.chat_id).first()
         if not chat_member.last_checked_message or message.send_time > chat_member.last_checked_message.send_time:
             chat_member.last_checked_message = message
             chat_member.save()
