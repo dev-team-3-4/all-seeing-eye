@@ -78,7 +78,6 @@ class OutputView(BaseView, CreateAPIView):
         if request.data['coins_amount'] < request.user.coins:
             raise APIException('Not enough coins.')
 
-
     def perform_create(self, serializer):
         web3 = get_web3_remote_provider()
         abi = [
