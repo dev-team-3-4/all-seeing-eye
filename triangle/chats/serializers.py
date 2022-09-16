@@ -12,7 +12,7 @@ class MessageReadSerializer(Serializer):
     new_messages = BooleanField(read_only=True)
 
     def save(self, **kwargs):
-        request = self.context.get['request']
+        request = self.context.get('request')
         message = self.instance
         chat_member = ChatMember.objects.filter(user=request.user, chat_id=message.chat_id).one()
         if not chat_member.last_checked_message or message.send_time > chat_member.last_checked_message.send_time:
