@@ -11,7 +11,7 @@ from bases.views import get_object_or_none, get_object_or_404
 
 __all__ = ['UserShortSerializer', 'EmailConfirmSerializer',
            'PasswordResetSerializer', 'ChangePasswordSerializer',
-           'UserSerializer']
+           'UserSerializer', 'ContactSerializer', 'UserFullSerializer']
 
 
 class UserShortSerializer(ModelSerializer):
@@ -58,14 +58,31 @@ class UserShortSerializer(ModelSerializer):
 
 
 class UserSerializer(ModelSerializer):
+    in_contacts = BooleanField(read_only=True, allow_null=True, default=False)
+
     class Meta:
         model = User
-        fields = ["id", "username", "profile_photo", "registration_time",
-                  "bank_card_number", "is_online"]
-        read_only_fields = ["id", "registration_time", "is_online"]
-        extra_kwargs = {
-            "bank_card_number": {"write_only": True}
-        }
+        fields = ["id", "username", "profile_photo", "registration_time", "is_online", "in_contacts"]
+        read_only_fields = fields
+
+    def to_representation(self, instance):
+        ret = super(UserSerializer, self).to_representation(instance)
+        request = self.context.get('request')
+        if request is None:
+            return ret
+        if request.user.is_authenticated:
+            ret['in_contacts'] = request.user.contain_in_contacts(instance)
+        else:
+            ret.pop('in_contacts')
+        return ret
+
+
+class UserFullSerializer(ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["id", "username", "profile_photo", "email", "registration_time",
+                  "ban_until", "is_online", "coins"]
+        read_only_fields = ["id", "registration_time", "is_online", "coins", "email", "ban_until"]
 
 
 class EmailConfirmSerializer(Serializer):
@@ -234,3 +251,19 @@ class ChangePasswordSerializer(Serializer):
         self._data = {'token': token.key}
 
         return instance
+
+
+class ContactSerializer(ModelSerializer):
+    user_subject = UserShortSerializer(many=False, required=False, read_only=True)
+    user_subject_id = IntegerField(write_only=True, required=True)
+
+    class Meta:
+        model = Contact
+        fields = ["user_subject", "user_subject_id", "user_owner"]
+        read_only_fields = ["user_subject"]
+        extra_kwargs = {
+            "user_owner": {"write_only": True, "required": True}
+        }
+
+    def to_representation(self, instance):
+        return super(ContactSerializer, self).to_representation(instance)['user_subject']

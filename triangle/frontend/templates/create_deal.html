@@ -1,0 +1,87 @@
+{% load static %}
+
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <link rel="stylesheet" href="{% static 'css/user.css'%}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/create_deal.css'%}" type="text/css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="{% static 'js/cookie_work.js' %}"></script>
+    <script src="{% static 'js/create_deal.js' %}"></script>
+
+
+    <title id="title">Начать сделку</title>
+
+    <script>
+        const username = getCookie("username");
+    </script>
+</head>
+<body>
+
+<div class="main">
+    <div class="left_side_buttons">
+        <button class="nav_button" onclick="location.replace('/web/user/' + username);">Профиль</button>
+        <button class="nav_button" onclick="location.replace('/web/chats')">Чаты</button>
+        <button class="nav_button" onclick="location.replace('/web/contacts')">Контакты</button>
+        <button class="nav_button" onclick="location.replace('/web/deals')">Сделки</button>
+        <button class="nav_button exit_button" onclick="clearCookie()">Выход</button>
+    </div>
+
+    <div class="profile_container">
+        <div class="main_container">
+            <div class="deal_body">
+                <div class="moderator_container">
+                    <div class="moderator">
+                        <div class="profile_picture"></div>
+                        <div class="username_role_container">
+                            <div class="username">
+                                <h3 class="">Username</h3>
+                                <h4 class="">Модератор</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="money_container">
+                    <div class="money_center_container">
+                        <div class="money_in_bank">Средства в банке</div>
+                        <button class="button update_button append_money_button">Пополнить</button>
+                    </div>
+                </div>
+                <div class="users_container">
+                    <div class="initiator">
+                        <div class="profile_picture"></div>
+                        <div class="username_role_container">
+                            <div class="username">
+                                <h3 class="">Username</h3>
+                                <h4 class="">Инициатор</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="responder">
+                        <div class="profile_picture"></div>
+                        <div class="username_role_container">
+                            <div class="username">
+                                <h3 class="">Username</h3>
+                                <h4 class="">Ответчик</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="right_sidebar">
+                <button class="nav_button">Пригласить модератора</button>
+                <button class="nav_button">Предложение</button>
+                <button class="nav_button">Чат сделки</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

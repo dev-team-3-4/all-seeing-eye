@@ -22,21 +22,134 @@ function getCookie(cName) {
 
 
 window.onload = function () {
+
+    $.ajax({
+        url: "/user/" + location.href.substring(location.href.lastIndexOf("/") + 1, location.href.length),
+        method: "get",
+        success: (data) => {
+            if(location.href.substring(location.href.lastIndexOf("/") + 1, location.href.length) === getCookie("username")) {
+                console.log(data)
+                $("#self_page_part").css("display", "block");
+                $("#email_input").val(data["email"]);
+                $("#input_username").val(data["username"]);
+                $("#bank_card_num").val(data["bank_card_number"]);
+
+                $.ajax({
+                    url: "/user/me",
+                    method: "get",
+                    success: (data) => {
+                        $("#balance").text("Баланс: " + data["coins"]);
+                    },
+                    headers: {
+                       "Authorization": "Token " + getCookie("token"),
+                    }
+                });
+            }
+            else {
+                $("#other_container").css("display", "block");
+                $("#username_h1").text(data["username"])
+                $("#username_input").val(data["username"]);
+
+                if(data["in_contacts"])
+                    $("#delete_from_contacts").css("display", "block");
+                else
+                    $("#add_to_friends_button").css("display", "block");
+
+                console.log(data)
+            }
+
+            let photo_link = "/static/img/camera_400.gif"
+            if (data["profile_photo"] != null)
+                photo_link = data["profile_photo"]
+
+            $(".status_online").text(data["is_online"] ? "Online" : "Offline")
+            $(".profile_photo").attr("src", photo_link)
+            $("#title").text(data["username"])
+        },
+        error: (data) => {
+            alert("Пользователя с таким именем нет!")
+        },
+        headers: {
+            "Authorization": "Token " + getCookie("token"),
+        }
+    })
+
+
+
+
+
+
+
+    $("#income_button").click(() => {
+        let hash = $("#income_hash_input").val();
+
+        $.ajax({
+            url:"/payments/input/",
+            method: "post",
+            dataType: "json",
+            data:{
+                "hash": hash
+            },
+            success: (data) => {
+                location.reload();
+            },
+            error: (data) => {
+                alert("Error, check console!")
+                console.log(data)
+            },
+            headers: {
+                "Authorization": "Token " + getCookie("token")
+            }
+        })
+    })
+
+    $("#outcome_button").click(() => {
+        let price = +$("#input_sum").val()
+        let address = $("#input_address").val()
+
+        $.ajax({
+            url: "/payments/output/",
+            method: "post",
+            dataType: "json",
+            data: {
+                "coins_amount": price,
+                "blockchain_address": address
+            },
+            success: (data) => {
+                location.reload();
+            },
+            error: (data) => {
+                alert("Error, check console!")
+                console.log(data)
+            },
+            headers: {
+                "Authorization": "Token " + getCookie("token")
+            }
+        })
+    })
+
+
+
+
+
+
+
+
     $("#username_bank_card_id_form").submit((e) => {
         e.preventDefault();
         $.ajax({
-            url: "/user/" + username + "/",
+            url: "/user/me/",
             method: "put",
             dataType: "json",
             data: {
-                "username": $("#input_username").val(),
-                "bank_card_number": $("#bank_card_num").val(),
+                "username": $("#input_username").val()
             },
             error: (data) => {
                 alert("Error, check console");
                 console.log(data);
             },
             success: (data) => {
+                setCookie("username", $("#input_username").val())
                 location.replace("/web/user/" + $("#input_username").val());
             },
             headers: {
@@ -63,6 +176,7 @@ window.onload = function () {
                 let token = data["token"]
                 setCookie("token", token);
                 alert("Пароль успешно заменён!");
+                location.reload();
 
             },
             headers: {
@@ -129,9 +243,122 @@ window.onload = function () {
                 },
                 success: (data) => {
                     location.replace("/web");
-                    setCookie("token", undefined)
+                    setCookie("token", "")
                 }
             });
         }
     })
+
+    $("#upload_image_input").change((e) => {
+        let form_data = new FormData();
+        form_data.append('profile_photo', $("#upload_image_input")[0].files[0]);
+        form_data.append('username', $("#input_username").val());
+
+        $.ajax({
+            method: 'put',
+            enctype: 'multipart/form-data',
+            url: '/user/me/',
+            data: form_data,
+            processData: false,
+            contentType: false,
+            cache: false,
+            success: (answer) => {
+                window.location.reload();
+            },
+            error: (answer) => {
+                alert("error, check console!")
+                console.error(answer);
+            },
+            timeout: 600000,
+            headers: {
+                "Authorization": "Token " + getCookie("token"),
+            }
+        });
+    })
+
+    $("#add_to_friends_button").click((e) => {
+        $.ajax({
+            url: "/user/" + $("#username_input").val() + "/contact/",
+            method: "post",
+            headers: {
+                "Authorization": "Token " + getCookie("token"),
+            },
+            error: (data) => {
+                alert("Error, check console")
+                console.log(data)
+            },
+            success: (data) => {
+                alert("Пользователь успешно добавлен в ваши контакты!")
+                location.reload()
+            }
+        });
+    });
+
+    $("#delete_from_contacts").click((e) => {
+        $.ajax({
+            url: "/user/" + $("#username_input").val() + "/contact/",
+            method: "delete",
+            headers: {
+                "Authorization": "Token " + getCookie("token"),
+            },
+            error: (data) => {
+                alert("Error, check console")
+                console.log(data)
+            },
+            success: (data) => {
+                alert("Пользователь успешно удалён из ваших контактов!")
+                location.reload()
+            }
+        });
+    });
+
+
+    $("#open_chat_button").click((e) => {
+        $.ajax({
+            url: "/chat/private/" + $("#username_input").val() + "/",
+            method: "post",
+            headers: {
+                "Authorization": "Token " + getCookie("token"),
+            },
+            error: (data) => {
+                alert("Error, check console")
+                console.log(data)
+            },
+            success: (data) => {
+                location.href = "/web/chat/" + data["id"];
+            }
+        });
+    });
+
+    $("#deal_button").click((e) => {
+        $.ajax({
+            url: "/chat/private/" + $("#username_input").val() + "/",
+            method: "post",
+            headers: {
+                "Authorization": "Token " + getCookie("token"),
+            },
+            error: (data) => {
+                alert("Error, check console")
+                console.log(data)
+            },
+            success: (data_chat_id) => {
+                let chat_id = data_chat_id["id"];
+                $.ajax({
+                    url: "",
+                    method: "post",
+                    headers: {
+                        "Authorization": "Token " + getCookie("token"),
+                    },
+                    error: (data) => {
+                        alert("Error, check console")
+                        console.log(data)
+                    },
+                    success: (data) => {
+                        location.href = "/web/chat/" + data["id"];
+                    }
+                });
+            }
+        });
+    });
+
 }

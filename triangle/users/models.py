@@ -60,14 +60,15 @@ class User(AbstractBaseUser, PermissionsMixin):
     role = SmallIntegerField(default=ROLES.USER)
     ban_until = DateTimeField(default=now)
     registration_time = DateTimeField(auto_now_add=True)
-    bank_card_number = CharField(max_length=16, null=True, blank=True)
+    coins = BigIntegerField(default=0)
+    contacts = ManyToManyField('User', 'in_contacts', through='Contact')
 
     @property
     def is_active(self):
         return self.ban_until <= now() and self.email
 
     @property
-    def is_online(self):
+    def is_online(self) -> bool:
         if self.last_login is None:
             return False
         return now() - self.last_login < self.ONLINE_REQUEST_TIMEOUT
@@ -84,6 +85,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         if hasattr(self, 'auth_token'):
             self.auth_token.delete()
         super(User, self).set_password(raw_password)
+
+    def contain_in_contacts(self, other):
+        return self.contact_objects.filter(deleted=False, user_subject=other).exists()
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -139,8 +143,10 @@ class PasswordResetObject(Model):
 
 
 class Contact(Model):
-    user_owner = ForeignKey('User', on_delete=CASCADE, related_name='contacts')
-    user_subject = ForeignKey('User', on_delete=CASCADE)
+    user_owner = ForeignKey('User', CASCADE, 'contact_objects')
+    user_subject = ForeignKey('User', CASCADE, 'in_contact_objects')
+    private_chat = ForeignKey('chats.Chat', SET_NULL, null=True)
+    deleted = BooleanField(default=False)
 
     class Meta:
         unique_together = ('user_owner', 'user_subject')

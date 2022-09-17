@@ -11,34 +11,59 @@
     <link rel="stylesheet" href="{% static 'css/user.css'%}" type="text/css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="{% static 'js/user.js' %}"></script>
-    <title>Пользователь {{ username }}</title>
+    <script src="{% static 'js/cookie_work.js' %}"></script>
+
+    <title id="title">Пользователь</title>
 
     <script>
-        var username = "{{ username }}";
+        const username = getCookie("username");
     </script>
 </head>
 <body>
 
 <div class="main">
     <div class="left_side_buttons">
-        <button class="nav_button">Профиль</button>
-        <button class="nav_button">Чаты</button>
-        <button class="nav_button">Контакты</button>
-        <button class="nav_button">Сделки</button>
-        <button class="nav_button exit_button">Выход</button>
+        <button class="nav_button" onclick="location.replace('/web/user/' + username);">Профиль</button>
+        <button class="nav_button" onclick="location.replace('/web/chats')">Чаты</button>
+        <button class="nav_button" onclick="location.replace('/web/contacts')">Контакты</button>
+        <button class="nav_button" onclick="location.replace('/web/deals')">Сделки</button>
+        <button class="nav_button exit_button" onclick="clearCookie()">Выход</button>
     </div>
 
     <div class="profile_container">
+        <div id="self_page_part" style="display: none;">
         <div class="buttons_container">
             <div style="display: flex; width: 100%; flex-direction: row;">
-                <img src="{% static 'img/camera_400.gif' %}" alt="Profile photo" class="profile_photo">
-                <input type="button" value="Загрузить изображение!" class="button upload_image_button">
+                <img src="" alt="Profile photo" class="profile_photo">
+
+                <label class="button upload_image_button upload_file_label">
+                    Загрузить изображение!
+                    <input type="file" style="display: none; width: 0;height: 0;" accept="image/png, image/jpeg, image/gif" id="upload_image_input"/>
+                </label>
+                <input type="button" value="Загрузить изображение!" class="button upload_image_button" style="display: none">
+
+                <div class="payment_info">
+                    <div class="income_form">
+                        <input class="text_input" type="text" placeholder="Хэш" id="income_hash_input" required>
+                        <button id="income_button" class="button">Пополнить</button>
+                    </div>
+                    <div class="out_form">
+                        <div class="inputs_out_form">
+                            <input class="text_input" type="text" placeholder="Адрес" id="input_address">
+                            <input class="text_input" type="number" placeholder="Сумма" id="input_sum">
+                        </div>
+                        <button id="outcome_button" class="button">Вывести</button>
+                    </div>
+
+                    <h4 id="balance"></h4>
+                </div>
             </div>
+
+        <p class="status_online"></p>
 
             <form class="inputs_form" id="username_bank_card_id_form">
                 <div class="inputs_container">
-                    <input type="text" value="{{ username }}" class="text_input" id="input_username">
-                    <input type="tel" inputmode="numeric" pattern="[0-9\s]{13,19}" autocomplete="cc-number" maxlength="19" placeholder="xxxx xxxx xxxx xxxx" class="text_input" id="bank_card_num" value="{{ card_number }}">
+                    <input type="text" value="" class="text_input" id="input_username">
                 </div>
                 <input type="submit" value="Сохранить!" class="button update_button">
             </form>
@@ -53,7 +78,7 @@
 
             <form method="get" class="inputs_form" id="change_email_send_key">
                 <div class="inputs_container">
-                    <input type="email" value="{{ user_email }}" class="text_input" name="email_input" placeholder="email" required id="email_input">
+                    <input type="email" value="" class="text_input" name="email_input" placeholder="email" required id="email_input">
                 </div>
                 <input type="submit" value="Отправить код!" class="button update_button">
             </form>
@@ -70,6 +95,26 @@
             </div>
 
         </div>
+        </div>
+
+    <!-- ELSE -->
+    <div id="other_container" style="display: none">
+         <div class="buttons_container">
+            <div style="display: flex; width: 100%; flex-direction: row;">
+                <img src="" alt="Profile photo" class="profile_photo">
+            </div>
+             <div class="inputs_form user_info">
+                 <h1 id="username_h1"></h1>
+                 <h2 class="status_online"></h2>
+             </div>
+         <input type="hidden" value="" id="username_input"/>
+             <button style="display: none;" class="button update_button add_to_friend_button" id="delete_from_contacts">Удалить из контактов!</button>
+             <button style="display: none;" class="button update_button add_to_friend_button" id="add_to_friends_button">Добавить в контакты!</button>
+
+             <button class="button update_button add_to_friend_button" id="open_chat_button">Открыть чат</button>
+             <button class="button update_button add_to_friend_button" id="deal_button" style="display: none">Сделка!</button>
+         </div>
+    </div>
     </div>
 </div>
 

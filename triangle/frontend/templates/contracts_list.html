@@ -1,0 +1,69 @@
+{% load static %}
+
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <link rel="stylesheet" href="{% static 'css/chats.css'%}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/contracts_list.css'%}" type="text/css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="{% static 'js/contracts_list.js' %}"></script>
+    <script src="{% static 'js/cookie_work.js' %}"></script>
+    <title>Сделки</title>
+
+    <script>
+        const username = getCookie("username");
+    </script>
+</head>
+<body>
+
+<div class="main">
+    <div class="left_side_buttons">
+        <button class="nav_button" onclick="location.replace('/web/user/' + username);">Профиль</button>
+        <button class="nav_button" onclick="location.replace('/web/chats')">Чаты</button>
+        <button class="nav_button" onclick="location.replace('/web/contacts')">Контакты</button>
+        <button class="nav_button" onclick="location.replace('/web/deals')">Сделки</button>
+        <button class="nav_button exit_button" onclick="clearCookie()">Выход</button>
+    </div>
+
+    <div class="profile_container">
+        <ul id="chats_list">
+            <a href="" class="contract_link">
+                <li class="deal_container">
+                    <div class="user_detail">
+                        <img src="/static/img/camera_400.gif" alt="" class="contract_user_photo">
+                        <div class="contract_other_info">
+                            <h4 class="contract_username">Петр Геннадич</h4>
+                            <h5>Первый юзер</h5>
+                        </div>
+                    </div>
+                    <div class="user_detail">
+                        <img src="/static/img/camera_400.gif" alt="" class="contract_user_photo">
+                        <div class="contract_other_info">
+                            <h4 class="contract_username">Василий Николаич</h4>
+                            <h5>Модератор</h5>
+                        </div>
+                    </div>
+                    <div class="user_detail">
+                        <img src="/static/img/camera_400.gif" alt="" class="contract_user_photo">
+                        <div class="contract_other_info">
+                            <h4 class="contract_username">Иван Василич</h4>
+                            <h5>Второй юзер</h5>
+                        </div>
+                    </div>
+
+                    <h4 class="contract_status">Средства в банке</h4>
+                    <h4 class="contract_status">Статус</h4>
+                </li>
+
+            </a>
+        </ul>
+    </div>
+</div>
+
+</body>
+</html>
