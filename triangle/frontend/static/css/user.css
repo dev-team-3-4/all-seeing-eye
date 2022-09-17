@@ -71,6 +71,7 @@
     border-radius: 10px;
     width: 100%;
     margin: 6px 0;
+    text-align: center;
 }
 
 .button:hover {
@@ -108,4 +109,66 @@
     background-color: #ff3131;
     height: 30px;
     width: 510px;
+}
+
+.upload_file_label {
+    text-align: center;
+    padding-top: 15px;
+    height: 25px;
+}
+.user_info {
+    display: inline-block;
+    color: white;
+}
+
+.add_to_friend_button {
+    height: 40px;
+}
+
+#delete_from_contacts {
+    background-color: red;
+}
+
+.status_online {
+    color: white;
+    margin: 5px;
+}
+
+
+.payment_info {
+    display: flex;
+    flex-direction: column;
+    margin-left: 50px;
+}
+
+#balance {
+    color: white;
+    margin-top: 20px;
+}
+
+.income_form {
+    display: flex;
+    flex-direction: row;
+}
+
+#income_button {
+    background-color: #4ab24b;
+    margin-top: 0;
+    width: 200px;
+}
+
+.out_form {
+    display: flex;
+    flex-direction: row;
+}
+
+.inputs_out_form {
+    display: flex;
+    flex-direction: column;
+}
+
+#outcome_button {
+    width: 200px;
+    background-color: #4ab24b;
+    margin-top: 0;
 }

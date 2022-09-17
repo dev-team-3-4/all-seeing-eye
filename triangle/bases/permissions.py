@@ -18,7 +18,7 @@ class BaseRestPermission(BasePermission):
                 view.check_put_perms(request, obj)
             elif request.method == 'DELETE':
                 view.check_delete_perms(request, obj)
-            else:
+            elif request.method != 'POST':
                 raise MethodNotAllowed(request.method)
         except APIException as e:
             self.message = e.detail

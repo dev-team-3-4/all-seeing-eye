@@ -6,6 +6,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('web/', include('frontend.urls')),
     path('user/', include('users.urls')),
+    path('chat/', include('chats.urls')),
+    path('contract/', include('contracts.urls')),
+    path('payments/', include('payments.urls'))
 ]
 
 if settings.DEBUG:
@@ -15,4 +18,5 @@ if settings.DEBUG:
         path('__docs__/', SpectacularAPIView.as_view(), name='__docs__'),
         path('swagger/', SpectacularSwaggerView.as_view(url_name='__docs__')),
     ]
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0])
