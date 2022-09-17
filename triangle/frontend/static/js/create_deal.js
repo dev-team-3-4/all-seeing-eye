@@ -1,5 +1,4 @@
 window.onload = () => {
-
     function image_link_check(link) {
         if (link == null)
             return  "/static/img/camera_400.gif"
@@ -17,6 +16,8 @@ window.onload = () => {
             if (moderator_invited) {
                 $("#moderator_filed").text(data["moderator"]["username"]);
                 $("#moderator_profile_picture").src(data["moderator"]["profile_photo"]);
+            } else {
+                $("#moderator_filed").text("(Не приглашён)");
             }
 
             $("#initiator_username").text(data["first_user"]["username"])
@@ -30,9 +31,17 @@ window.onload = () => {
             $("#append_money_button").click((e) => {
                 location.href = `/web/input_deal/${contract_id}`
             })
+
+            $("#button_chat_deal").click(() => {
+                location.href = `/web/chat/` + data["chat_id"];
+            })
+
+            $("#invite_button").click(() => {
+                location.href = `/web/invite_moderator/` + data["chat_id"];
+            })
         },
         headers: {
-            "Authorization": "Token " + getCookie("token"),
+            "Authorization": "Token " + getCookie("token")
         },
     });
 }
