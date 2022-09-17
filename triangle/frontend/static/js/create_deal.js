@@ -6,7 +6,7 @@ window.onload = () => {
         return link
     }
 
-    const contract_id =  1;
+    const contract_id = +location.href.substring(location.href.lastIndexOf("/") + 1)
     var moderator_invited = true;
     $.ajax({
         url: `/contract/${contract_id}/`,
@@ -25,12 +25,14 @@ window.onload = () => {
             $("#initiator_profile_picture").attr("src", image_link_check(data["first_user"]["profile_photo"]))
             $("#responder_profile_picture").attr("src", image_link_check(data["second_user"]["profile_photo"]))
 
+            $("#money_in_bank").text("Средства в банке: " + data["bank"])
 
-
-
+            $("#append_money_button").click((e) => {
+                location.href = `/web/input_deal/${contract_id}`
+            })
         },
         headers: {
             "Authorization": "Token " + getCookie("token"),
         },
-    })
+    });
 }

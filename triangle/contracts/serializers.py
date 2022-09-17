@@ -56,7 +56,7 @@ class WithdrawalFundsRequestSerializer(ModelSerializer):
 
 
 class BankInputSerializer(Serializer):
-    input_coins = DecimalField(max_digits=10, decimal_places=2, default=0, write_only=True)
+    input_coins = IntegerField(write_only=True)
 
     def create(self, validated_data):
         user = self.context['request'].user
