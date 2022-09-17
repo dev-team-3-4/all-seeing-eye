@@ -46,6 +46,6 @@ def contracts_list(request):
     return render(request, "contracts_list.html")
 
 
-def create_deal(request):
+def create_deal(request, deal_id: int):
     return render(request, "create_deal.html")
 

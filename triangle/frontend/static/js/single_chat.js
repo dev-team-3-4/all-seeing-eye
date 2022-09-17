@@ -105,11 +105,37 @@ window.onload = function () {
         $(`#edit_message_${message_id}_button`).on('click', (e) => {editMessageFunction()})
     }
 
+    function startDealButtonClosure(user_id) {
+        return function () {
+            $.ajax({
+                url: "/contract/",
+                method: "post",
+                data: {
+                    "second_user_id": user_id
+                },
+                headers: {
+                    "Authorization": "Token " + getCookie("token"),
+                },
+                success: (data) => {
+                    alert("Сделка создана!")
+                },
+                error: (data) => {
+                    alert("Unable to kick this user!");
+                }
+            })
+        }
+    }
+
     function add_user(image_link, chat_username, role_id, user_id) {
         let kick_button = "";
 
         if (role_id < users_list_dict[getCookie("username")]["role"] - 1)
             kick_button = `<h5 class="kick_user_button" onclick="" id="kick_user_${user_id}_button">Выгнать!</h5>`
+
+        let button_html = '';
+        if (chat_username != username) {
+            button_html = `<button class="button deal_button" id="deal_button_${user_id}">Сделка!</button>`
+        }
 
         $("#users_list").append(`<div class="user_info">
              <img class="user_image" src="${image_link}">
@@ -118,8 +144,14 @@ window.onload = function () {
                     <h5 class="role">${roles_list[role_id]}</h5>
                     ${kick_button}
             </div>
-            <button class="button deal_button">Сделка!</button>
+            ${button_html}
         </div>`);
+
+
+        if (button_html != '') {
+            let deal_closure = startDealButtonClosure(user_id);
+            $(`#deal_button_${user_id}`).click(() => {deal_closure()});
+        }
 
         $(`#kick_user_${user_id}_button`).on('click', (e) => {
             $.ajax({

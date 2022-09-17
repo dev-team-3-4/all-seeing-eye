@@ -11,5 +11,5 @@ urlpatterns = [
     path('chat/<int:chat_id>', chat_with_users_page),
     path('create_chat', create_chat),
     path('deals', contracts_list),
-    path('create_deal', create_deal),
+    path('create_deal/<int:deal_id>', create_deal),
 ]
