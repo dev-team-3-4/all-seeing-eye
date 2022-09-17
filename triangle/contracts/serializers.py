@@ -58,14 +58,14 @@ class WithdrawalFundsRequestSerializer(ModelSerializer):
 class BankInputSerializer(Serializer):
     input_coins = IntegerField(write_only=True)
 
-    def create(self, validated_data):
+    def save(self, **kwargs):
         user = self.context['request'].user
         contract_id = self.context['view'].kwargs['id']
 
-        contract = SmartContract.objects.get(contract_id)
+        contract = SmartContract.objects.get(id=contract_id)
 
-        user.coins -= validated_data['input_coins']
-        contract.bank += validated_data['input_coins']
+        user.coins -= self.validated_data['input_coins']
+        contract.bank += self.validated_data['input_coins']
 
         user.save()
         contract.save()
