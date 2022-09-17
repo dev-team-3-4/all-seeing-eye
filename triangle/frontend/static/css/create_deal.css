@@ -60,10 +60,10 @@
 }
 
 .profile_picture {
-    background-color: red;
     width: 150px;
     height: 150px;
     border-radius: 10px;
+    border-style: none
 }
 
 .username {

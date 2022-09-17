@@ -1,5 +1,10 @@
 window.onload = () => {
 
+    function image_link_check(link) {
+        if (link == null)
+            return  "/static/img/camera_400.gif"
+        return link
+    }
 
     const contract_id =  1;
     var moderator_invited = true;
@@ -16,6 +21,11 @@ window.onload = () => {
 
             $("#initiator_username").text(data["first_user"]["username"])
             $("#responder_username").text(data["second_user"]["username"])
+
+            $("#initiator_profile_picture").attr("src", image_link_check(data["first_user"]["profile_photo"]))
+            $("#responder_profile_picture").attr("src", image_link_check(data["second_user"]["profile_photo"]))
+
+
 
 
         },
