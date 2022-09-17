@@ -244,5 +244,5 @@ class BankInputView(BaseView, CreateAPIView):
         if user not in (contract.first_user, contract.second_user, contract.moderator):
             raise APIException("This is not your smart-contract.", 403)
 
-        if user.coins < request.data['input_coins']:
+        if user.coins < int(request.data['input_coins']):
             raise APIException('Not enough coins on account.', 402)

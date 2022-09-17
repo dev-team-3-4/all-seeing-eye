@@ -21,8 +21,7 @@ window.onload = () => {
                 location.href = "/web/create_deal/" + contract_id
             },
             error: (data) => {
-                console.log(data)
-                alert("Error")
+                alert("Недостаточно монет")
             }
         })
     })
