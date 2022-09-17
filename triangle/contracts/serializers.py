@@ -40,7 +40,7 @@ class ModeratorInviteSerializer(ModelSerializer):
     class Meta:
         model = ModeratorInvite
         fields = ["first_user_agree", "second_user_agree", "moderator", "checked"]
-        read_only_field = fields
+        read_only_fields = fields
 
 
 class WithdrawalFundsRequestSerializer(ModelSerializer):
