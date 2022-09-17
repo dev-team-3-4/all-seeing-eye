@@ -16,6 +16,7 @@ window.onload = () => {
             if (moderator_invited) {
                 $("#moderator_filed").text(data["moderator"]["username"]);
                 $("#moderator_profile_picture").src(data["moderator"]["profile_photo"]);
+                $("#invite_button").hide();
             } else {
                 $("#moderator_filed").text("(Не приглашён)");
             }
@@ -37,7 +38,7 @@ window.onload = () => {
             })
 
             $("#invite_button").click(() => {
-                location.href = `/web/invite_moderator/` + data["chat_id"];
+                location.href = `/web/invite_moderator/` + data["id"];
             })
         },
         headers: {

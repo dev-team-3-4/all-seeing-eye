@@ -5,7 +5,7 @@ from rest_framework.authtoken.models import Token
 
 __all__ = ['index', 'about_user', 'reset_password', 'chats_page', 'contacts_page',
            'search_contacts_page', 'chat_with_users_page', 'create_chat', 'contracts_list', 'create_deal', 'input_deal',
-           'invite_moderator']
+           'invite_moderator', 'invites_page']
 
 from chats.models import Chat
 from users.models import User
@@ -57,3 +57,8 @@ def input_deal(request, deal_id: int):
 
 def invite_moderator(request, deal_id: int):
     return render(request, "add_moderator.html")
+
+
+def invites_page(request):
+    return render(request, "invites_list.html")
+
