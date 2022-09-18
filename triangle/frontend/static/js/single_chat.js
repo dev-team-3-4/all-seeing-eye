@@ -99,14 +99,26 @@ window.onload = function () {
                 <button class="button edit_message_button edit_message_button_red" id="decline_moderator_${whole_data['id']}">Отклонить</button>
                 <button class="button edit_message_button" id="accept_moderator_${whole_data['id']}">Принять</button>
             </div>
-            
-                
-            
             </div>`;
-            // if (whole_data["moderator_invite"]["first_user_agree"] != null) {
-            //     $(`#decline_moderator_${whole_data['id']}`).hide()
-            // }
         }
+
+        let withdrawal_request = '';
+        if (whole_data["withdrawal_request"] != undefined) {
+            withdrawal_request =
+            `<div class="message_content">
+                <h4>Выдвинуто предложение</h4>
+                <h5>Заказчик получает: ${whole_data["withdrawal_request"]["first_user_funds"]}</h5>
+                <h5>Ответчик получает: ${whole_data["withdrawal_request"]["second_user_funds"]}</h5>
+                <h5>Модератор получает: ${whole_data["withdrawal_request"]["moderator_funds"]}</h5>
+                <h5>Сделка ${whole_data["withdrawal_request"]["close_contract"] ? "":"не"} будет закрыта</h5>
+            <div class="moderator_info" style="max-width: 200px">
+                <button class="button edit_message_button edit_message_button_red" id="decline_moderator_${whole_data['id']}">Отклонить</button>
+                <button class="button edit_message_button" id="accept_moderator_${whole_data['id']}">Принять</button>
+            </div>
+            </div>`;
+        }
+
+
         if (content == undefined)
             content = ''
         let message_template =
@@ -123,6 +135,7 @@ window.onload = function () {
                         <div id="message_${message_id}_content">${content}</div>
                         ${attachments_html}
                         ${invite_moderator_request}
+                        ${withdrawal_request}
                     </div>
                 </div>
                 <div class="edit_message">
@@ -160,6 +173,10 @@ window.onload = function () {
                     "Authorization": "Token " + getCookie("token"),
                 },
             })
+        })
+
+        $(`#decline_withdrawal${whole_data['id']}`).click(() => {
+
         })
     }
 
