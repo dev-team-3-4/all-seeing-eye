@@ -44,9 +44,15 @@ window.onload = function () {
         }
     }
 
+    function image_link_check(link) {
+        if (link == null)
+            return  "/static/img/camera_400.gif"
+        return link
+    }
+
     function add_message(
         image_link, content, time, username, message_id, add_edit_tab = false, add_remove_tab = false,
-        attachments = []
+        attachments = [], whole_data
     ) {
         let deleteMessageFunction = deleteMessageClosure(message_id);
         let editMessageFunction = editMessageClosure(message_id)
@@ -78,6 +84,31 @@ window.onload = function () {
                 </a>`
         });
 
+        let invite_moderator_request ='';
+        if (whole_data["moderator_invite"] != undefined) {
+            let moderator_photo_link = image_link_check(whole_data['moderator_invite']['moderator']['profile_photo'])
+            let moderator_name = whole_data['moderator_invite']['moderator']['username']
+            invite_moderator_request =
+            `<div class="message_content">
+                <h4>Хочет пригласить модератора:</h4>
+                <div class="moderator_info">
+                    <img class="message_image" src="${moderator_photo_link}">
+                    <div>${moderator_name}</div>
+            </div>
+            <div class="moderator_info" style="max-width: 200px">
+                <button class="button edit_message_button edit_message_button_red" id="decline_moderator_${whole_data['id']}">Отклонить</button>
+                <button class="button edit_message_button" id="accept_moderator_${whole_data['id']}">Принять</button>
+            </div>
+            
+                
+            
+            </div>`;
+            // if (whole_data["moderator_invite"]["first_user_agree"] != null) {
+            //     $(`#decline_moderator_${whole_data['id']}`).hide()
+            // }
+        }
+        if (content == undefined)
+            content = ''
         let message_template =
         `<div class="message_container">
             <div class="message_info">
@@ -91,6 +122,7 @@ window.onload = function () {
                     <div class="message_content">
                         <div id="message_${message_id}_content">${content}</div>
                         ${attachments_html}
+                        ${invite_moderator_request}
                     </div>
                 </div>
                 <div class="edit_message">
@@ -103,6 +135,32 @@ window.onload = function () {
         $("#messages_container").append(message_template)
         $(`#delete_message_${message_id}_button`).on('click', (e) => {deleteMessageFunction()});
         $(`#edit_message_${message_id}_button`).on('click', (e) => {editMessageFunction()})
+
+        $(`#decline_moderator_${whole_data['id']}`).click(() => {
+            $.ajax({
+                url: `/contract/message/${whole_data['id']}/`,
+                method: "delete",
+                success: (data) => {
+                    alert("Успешно")
+                },
+                headers: {
+                    "Authorization": "Token " + getCookie("token"),
+                },
+            })
+        })
+
+        $(`#accept_moderator_${whole_data['id']}`).click(() => {
+            $.ajax({
+                url: `/contract/message/${whole_data['id']}/`,
+                method: "put",
+                success: (data) => {
+                    alert("Успешно")
+                },
+                headers: {
+                    "Authorization": "Token " + getCookie("token"),
+                },
+            })
+        })
     }
 
     function startDealButtonClosure(user_id) {
@@ -270,9 +328,9 @@ window.onload = function () {
                         item["id"],
                         item["author"]["username"] === getCookie("username"),
                         item["author"]["username"] === getCookie("username"),
-                        item["attachments"]
+                        item["attachments"],
                         //(users_list_dict[item["author"]["username"]]["role"] <= users_list_dict[getCookie("username")]["role"]) || (item["author"]["username"] === getCookie("username"))
-
+                        item
                     )
                 });
             },
