@@ -44,9 +44,6 @@ class ModeratorInviteSerializer(ModelSerializer):
 
 
 class WithdrawalFundsRequestSerializer(ModelSerializer):
-    author_id = IntegerField(write_only=True)
-    chat_id = IntegerField(write_only=True)
-
     class Meta:
         model = WithdrawalFundsRequest
         fields = ['first_user_agree', 'second_user_agree', 'moderator_agree',

@@ -12,13 +12,13 @@ window.onload = () => {
         method: "get",
         success: (data) => {
             console.log(data)
-            moderator_invited = data["moderator"] != undefined;
+            const moderator_invited = data["moderator"] != undefined;
             if (moderator_invited) {
                 $("#moderator_filed").text(data["moderator"]["username"]);
-                $("#moderator_profile_picture").src(data["moderator"]["profile_photo"]);
+                $("#moderator_profile_picture").attr('src', image_link_check(data["moderator"]["profile_photo"]));
                 $("#invite_button").hide();
             } else {
-                $("#moderator_filed").text("(Не приглашён)");
+                $("#moderator_filed").text("(Остутствует)");
             }
 
             $("#initiator_username").text(data["first_user"]["username"])
