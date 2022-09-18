@@ -231,7 +231,8 @@ class WithdrawalFundsRequestView(BaseView, CreateAPIView):
         contract = get_object_or_404(SmartContract.objects, id=self.kwargs["contract_id"])
         serializer.save(
             author_id=self.request.user.id,
-            chat_id=contract.chat_id
+            chat_id=contract.chat_id,
+            smart_contract=contract
         )
 
 
