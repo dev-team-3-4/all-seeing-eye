@@ -343,3 +343,8 @@ body {
     height: 30px;
 
 }
+
+.moderator_info {
+    display: flex;
+    flex-direction: row;
+}

@@ -15,9 +15,11 @@ __all__ = ["SmartContractViewSet", "SmartContractView", "InviteModeratorView",
 
 
 def get_all_user_contracts(user):
-    contracts = user.first_contracts.all()
-    contracts.union(user.second_contracts.all())
-    contracts.union(user.moderator_contracts.all())
+    contracts = (
+            user.first_contracts.all() |
+            user.second_contracts.all() |
+            user.moderator_contracts.all()
+    ).distinct()
 
     return contracts
 
@@ -231,7 +233,8 @@ class WithdrawalFundsRequestView(BaseView, CreateAPIView):
         contract = get_object_or_404(SmartContract.objects, id=self.kwargs["contract_id"])
         serializer.save(
             author_id=self.request.user.id,
-            chat_id=contract.chat_id
+            chat_id=contract.chat_id,
+            smart_contract=contract
         )
 
 

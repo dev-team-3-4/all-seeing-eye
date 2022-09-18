@@ -332,33 +332,29 @@ window.onload = function () {
 
     $("#deal_button").click((e) => {
         $.ajax({
-            url: "/chat/private/" + $("#username_input").val() + "/",
-            method: "post",
-            headers: {
-                "Authorization": "Token " + getCookie("token"),
-            },
-            error: (data) => {
-                alert("Error, check console")
-                console.log(data)
-            },
-            success: (data_chat_id) => {
-                let chat_id = data_chat_id["id"];
+            url: "/user/" + $("#username_input").val(),
+            success: (data) => {
                 $.ajax({
-                    url: "",
-                    method: "post",
-                    headers: {
-                        "Authorization": "Token " + getCookie("token"),
-                    },
-                    error: (data) => {
-                        alert("Error, check console")
-                        console.log(data)
-                    },
-                    success: (data) => {
-                        location.href = "/web/chat/" + data["id"];
-                    }
-                });
+                url: "/contract/",
+                method: "post",
+                data: {
+                    "second_user_id": data["id"]
+                },
+                headers: {
+                    "Authorization": "Token " + getCookie("token"),
+                },
+                success: (data) => {
+                    console.log(data)
+                    location.href = "/web/create_deal/" + data["id"]
+                },
+                error: (data) => {
+                }
+            })
+            },
+            headers: {
+                 "Authorization": "Token " + getCookie("token"),
             }
-        });
+        })
     });
 
 }
