@@ -63,6 +63,6 @@ window.onload = () => {
         error: (answer) => {
             alert("error, check console!");
             console.error(answer);
-        },
+        }
     });
 }
