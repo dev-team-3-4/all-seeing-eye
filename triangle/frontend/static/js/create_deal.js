@@ -40,6 +40,10 @@ window.onload = () => {
             $("#invite_button").click(() => {
                 location.href = `/web/invite_moderator/` + data["id"];
             })
+
+            $("#constructor_button").click(() => {
+                location.href = `/web/constructor_deal/` + data["id"];
+            })
         },
         headers: {
             "Authorization": "Token " + getCookie("token")
