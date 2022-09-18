@@ -18,7 +18,7 @@ window.onload = () => {
                 $("#moderator_profile_picture").src(data["moderator"]["profile_photo"]);
                 $("#invite_button").hide();
             } else {
-                $("#moderator_filed").text("(Не приглашён)");
+                $("#moderator_filed").text("(Остутствует)");
             }
 
             $("#initiator_username").text(data["first_user"]["username"])
