@@ -13,7 +13,7 @@ window.onload = () => {
 
         let moderator_name = moderator == null ? "(Отсутствует)" : moderator["username"];
         $("#chats_list").append(
-        `<a href="/web/create_deal/${info['id']}" class="contract_link">
+        `
                 <li class="deal_container">
                     <div class="user_detail">
                         <img src="/static/img/camera_400.gif" alt="" class="contract_user_photo">
@@ -39,10 +39,37 @@ window.onload = () => {
 
                     <h4 class="contract_status">Средства в банке: ${info["bank"]}</h4>
                     <h4 class="contract_status">Закрыт: ${info["is_closed"]? "Да": "Нет"}</h4>
+                       <button class="button edit_message_button edit_message_button_red" id="decline_moderator_${info['id']}">Отклонить</button>
+                       <button class="button edit_message_button" id="accept_moderator_${info['id']}">Принять</button>
                     <hr class="deals_split_line">
-                </li>
-            </a>`
+                </li>`
         );
+
+        $(`#decline_moderator_${info['id']}`).click(() => {
+            $.ajax({
+                url: `/contract/${info['id']}/invite`,
+                method: "delete",
+                success: (data) => {
+                    location.reload()
+                },
+                headers: {
+                    "Authorization": "Token " + getCookie("token")
+                }
+            })
+        });
+
+        $(`#accept_moderator_${info['id']}`).click(() => {
+            $.ajax({
+                url: `/contract/${info['id']}/invite`,
+                method: "delete",
+                success: (data) => {
+                    location.reload()
+                },
+                headers: {
+                    "Authorization": "Token " + getCookie("token")
+                }
+            })
+        });
     }
 
     $.ajax({
@@ -56,6 +83,7 @@ window.onload = () => {
             "Authorization": "Token " + getCookie("token"),
         },
         success: (answer) => {
+            console.log(answer)
             answer["results"].forEach((item) => {
                 addContract(item);
             });
