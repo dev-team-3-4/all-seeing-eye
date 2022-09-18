@@ -38,10 +38,10 @@
             <div class="deal_body">
                 <div class="moderator_container">
                     <div class="moderator">
-                        <div class="profile_picture"></div>
+                        <img src="{% static 'img/camera_400.gif' %}" class="profile_picture" id="moderator_profile_picture">
                         <div class="username_role_container">
                             <div class="username">
-                                <h3 class="">Username</h3>
+                                <h3 class="" id="moderator_filed">Username</h3>
                                 <h4 class="">Модератор</h4>
                             </div>
                         </div>
@@ -49,25 +49,25 @@
                 </div>
                 <div class="money_container">
                     <div class="money_center_container">
-                        <div class="money_in_bank">Средства в банке</div>
-                        <button class="button update_button append_money_button">Пополнить</button>
+                        <div class="money_in_bank" id="money_in_bank"></div>
+                        <button class="button update_button append_money_button" id="append_money_button">Пополнить</button>
                     </div>
                 </div>
                 <div class="users_container">
                     <div class="initiator">
-                        <div class="profile_picture"></div>
+                        <img class="profile_picture" id="initiator_profile_picture">
                         <div class="username_role_container">
                             <div class="username">
-                                <h3 class="">Username</h3>
+                                <h3 class="" id="initiator_username">Username</h3>
                                 <h4 class="">Инициатор</h4>
                             </div>
                         </div>
                     </div>
                     <div class="responder">
-                        <div class="profile_picture"></div>
+                        <img class="profile_picture" id="responder_profile_picture">
                         <div class="username_role_container">
                             <div class="username">
-                                <h3 class="">Username</h3>
+                                <h3 class="" id="responder_username">Username</h3>
                                 <h4 class="">Ответчик</h4>
                             </div>
                         </div>
@@ -75,9 +75,9 @@
                 </div>
             </div>
             <div class="right_sidebar">
-                <button class="nav_button">Пригласить модератора</button>
-                <button class="nav_button">Предложение</button>
-                <button class="nav_button">Чат сделки</button>
+                <button class="nav_button" id="invite_button">Пригласить модератора</button>
+                <button class="nav_button" id="constructor_button">Предложение</button>
+                <button class="nav_button" id="button_chat_deal">Чат сделки</button>
             </div>
         </div>
     </div>

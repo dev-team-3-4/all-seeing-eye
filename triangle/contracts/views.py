@@ -227,10 +227,12 @@ class WithdrawalFundsRequestView(BaseView, CreateAPIView):
            request.data.get('moderator_funds', 0) < 0:
             raise APIException("Invalid funds.", 400)
 
-        if isinstance(request.data, QueryDict):
-            request.data._mutable = True
-        request.data["author_id"] = request.user.id
-        request.data["chat_id"] = contract.chat_id
+    def perform_create(self, serializer):
+        contract = get_object_or_404(SmartContract.objects, id=self.kwargs["contract_id"])
+        serializer.save(
+            author_id=self.request.user.id,
+            chat_id=contract.chat_id
+        )
 
 
 class BankInputView(BaseView, CreateAPIView):
@@ -244,5 +246,5 @@ class BankInputView(BaseView, CreateAPIView):
         if user not in (contract.first_user, contract.second_user, contract.moderator):
             raise APIException("This is not your smart-contract.", 403)
 
-        if user.coins < request.data['input_coins']:
+        if user.coins < int(request.data['input_coins']):
             raise APIException('Not enough coins on account.', 402)

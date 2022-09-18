@@ -4,7 +4,8 @@ from http.cookies import SimpleCookie
 from rest_framework.authtoken.models import Token
 
 __all__ = ['index', 'about_user', 'reset_password', 'chats_page', 'contacts_page',
-           'search_contacts_page', 'chat_with_users_page', 'create_chat', 'contracts_list', 'create_deal']
+           'search_contacts_page', 'chat_with_users_page', 'create_chat', 'contracts_list', 'create_deal', 'input_deal',
+           'invite_moderator', 'invites_page', 'constructor_deal_page']
 
 from chats.models import Chat
 from users.models import User
@@ -46,6 +47,21 @@ def contracts_list(request):
     return render(request, "contracts_list.html")
 
 
-def create_deal(request):
+def create_deal(request, deal_id: int):
     return render(request, "create_deal.html")
 
+
+def input_deal(request, deal_id: int):
+    return render(request, "append_deal.html")
+
+
+def invite_moderator(request, deal_id: int):
+    return render(request, "add_moderator.html")
+
+
+def invites_page(request):
+    return render(request, "invites_list.html")
+
+
+def constructor_deal_page(request, deal_id):
+    return render(request, "constructor_deal.html")

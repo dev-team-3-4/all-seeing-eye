@@ -46,7 +46,7 @@ window.onload = () => {
     }
 
     $.ajax({
-        url: "/contract/",
+        url: "/contract/invites",
         method: "get",
         data: {
             "page": 1,
@@ -63,6 +63,6 @@ window.onload = () => {
         error: (answer) => {
             alert("error, check console!");
             console.error(answer);
-        },
+        }
     });
 }
