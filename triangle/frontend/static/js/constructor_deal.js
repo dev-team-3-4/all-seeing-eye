@@ -15,8 +15,7 @@ window.onload = () => {
             data: JSON.stringify(send_data),
             contentType: "application/json",
             success: (data) => {
-                let user_id = data["id"];
-                alert("Успешно")
+                location.href = "/web/create_deal/" + contract_id
             },
             error: (data) => {
                 alert("There are moderator's funds, but the contract haven't a moderator")

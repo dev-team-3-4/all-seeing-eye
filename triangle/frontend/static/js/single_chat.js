@@ -117,7 +117,8 @@ window.onload = function () {
                     "Authorization": "Token " + getCookie("token"),
                 },
                 success: (data) => {
-                    alert("Сделка создана!")
+                    console.log(data)
+                    location.href = "/web/create_deal/" + data["id"]
                 },
                 error: (data) => {
                     alert("Unable to kick this user!");
