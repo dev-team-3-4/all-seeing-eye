@@ -15,9 +15,11 @@ __all__ = ["SmartContractViewSet", "SmartContractView", "InviteModeratorView",
 
 
 def get_all_user_contracts(user):
-    contracts = user.first_contracts.all()
-    contracts.union(user.second_contracts.all())
-    contracts.union(user.moderator_contracts.all())
+    contracts = (
+            user.first_contracts.all() |
+            user.second_contracts.all() |
+            user.moderator_contracts.all()
+    ).distinct()
 
     return contracts
 
