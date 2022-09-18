@@ -13,4 +13,4 @@
 - [Курсовая работа](https://github.com/dev-team-3-4/all-seeing-eye/blob/main/docs/Курсовая_работа.docx)
 
 ## Демонстрационная версия сайта на heroku:
-https://triangle-dev.herokuapp.com/web/
+https://triangle-demo-1.herokuapp.com/
