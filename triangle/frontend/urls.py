@@ -11,5 +11,9 @@ urlpatterns = [
     path('chat/<int:chat_id>', chat_with_users_page),
     path('create_chat', create_chat),
     path('deals', contracts_list),
-    path('create_deal', create_deal),
+    path('create_deal/<int:deal_id>', create_deal),
+    path('input_deal/<int:deal_id>', input_deal),
+    path('invite_moderator/<int:deal_id>', invite_moderator),
+    path('invites', invites_page),
+    path('constructor_deal/<int:deal_id>', constructor_deal_page)
 ]

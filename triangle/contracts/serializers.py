@@ -40,7 +40,7 @@ class ModeratorInviteSerializer(ModelSerializer):
     class Meta:
         model = ModeratorInvite
         fields = ["first_user_agree", "second_user_agree", "moderator", "checked"]
-        read_only_field = fields
+        read_only_fields = fields
 
 
 class WithdrawalFundsRequestSerializer(ModelSerializer):
@@ -51,21 +51,21 @@ class WithdrawalFundsRequestSerializer(ModelSerializer):
         model = WithdrawalFundsRequest
         fields = ['first_user_agree', 'second_user_agree', 'moderator_agree',
                   'first_user_funds', 'second_user_funds', 'moderator_funds',
-                  'close_contract', 'author_id', 'chat_id']
+                  'close_contract']
         read_only_fields = ['first_user_agree', 'second_user_agree', 'moderator_agree']
 
 
 class BankInputSerializer(Serializer):
-    input_coins = DecimalField(max_digits=10, decimal_places=2, default=0, write_only=True)
+    input_coins = IntegerField(write_only=True)
 
-    def create(self, validated_data):
+    def save(self, **kwargs):
         user = self.context['request'].user
         contract_id = self.context['view'].kwargs['id']
 
-        contract = SmartContract.objects.get(contract_id)
+        contract = SmartContract.objects.get(id=contract_id)
 
-        user.coins -= validated_data['input_coins']
-        contract.bank += validated_data['input_coins']
+        user.coins -= self.validated_data['input_coins']
+        contract.bank += self.validated_data['input_coins']
 
         user.save()
         contract.save()
