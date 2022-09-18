@@ -51,7 +51,7 @@ class WithdrawalFundsRequestSerializer(ModelSerializer):
         model = WithdrawalFundsRequest
         fields = ['first_user_agree', 'second_user_agree', 'moderator_agree',
                   'first_user_funds', 'second_user_funds', 'moderator_funds',
-                  'close_contract', 'author_id', 'chat_id']
+                  'close_contract']
         read_only_fields = ['first_user_agree', 'second_user_agree', 'moderator_agree']
 
 
