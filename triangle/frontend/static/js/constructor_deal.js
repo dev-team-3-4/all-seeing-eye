@@ -19,7 +19,7 @@ window.onload = () => {
                 alert("Успешно")
             },
             error: (data) => {
-                alert("Ошибка сервера!")
+                alert("There are moderator's funds, but the contract haven't a moderator")
             },
             headers: {
                 "Authorization": "Token " + getCookie("token")
