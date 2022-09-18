@@ -60,8 +60,8 @@ window.onload = () => {
 
         $(`#accept_moderator_${info['id']}`).click(() => {
             $.ajax({
-                url: `/contract/${info['id']}/invite`,
-                method: "delete",
+                url: `/contract/${info['id']}/invite/`,
+                method: "put",
                 success: (data) => {
                     location.reload()
                 },
