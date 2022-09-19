@@ -17,3 +17,4 @@ https://triangle-demo-1.herokuapp.com/web/
 ## Презентация:
 [Презентация](https://github.com/dev-team-3-4/all-seeing-eye/blob/master/Презентация.pptx)
 ## Техническое видео:
+[Техническое видео](https://drive.google.com/drive/folders/15L8e3bc_cFPif9wnhdNmXCvx3lKuZCfK)
